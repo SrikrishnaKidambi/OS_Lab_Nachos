@@ -112,7 +112,7 @@ ifeq ($(hosttype),unknown)
 PROGRAMS = unknownhost
 else
 # change this if you create a new test program!
-PROGRAMS = abs add halt shell matmult sort segments test_syscall num_io char_io random str_io ascii bubblesort help create_file open_file readwrite exec test_sem sinhvien voinuoc main
+PROGRAMS = prioritySchedulerTest priority1 priority2 priority3 child abs add halt shell matmult sort segments test_syscall num_io char_io random str_io ascii bubblesort help create_file open_file readwrite exec test_sem sinhvien voinuoc main
 endif
 
 all: $(PROGRAMS)
@@ -126,12 +126,43 @@ halt: halt.o start.o
 	$(LD) $(LDFLAGS) start.o halt.o -o halt.coff
 	$(COFF2NOFF) halt.coff halt
 
+prioritySchedulerTest.o: prioritySchedulerTest.c
+	$(CC) $(CFLAGS) -c prioritySchedulerTest.c
+
+prioritySchedulerTest: prioritySchedulerTest.o start.o
+	$(LD) $(LDFLAGS) start.o prioritySchedulerTest.o -o prioritySchedulerTest.coff
+	$(COFF2NOFF) prioritySchedulerTest.coff prioritySchedulerTest
+priority1.o: priority1.c
+	$(CC) $(CFLAGS) -c priority1.c
+priority1: priority1.o start.o
+	$(LD) $(LDFLAGS) start.o priority1.o -o priority1.coff
+	$(COFF2NOFF) priority1.coff priority1
+
+priority2.o: priority2.c
+	$(CC) $(CFLAGS) -c priority2.c
+priority2: priority2.o start.o
+	$(LD) $(LDFLAGS) start.o priority2.o -o priority2.coff
+	$(COFF2NOFF) priority2.coff priority2
+
+priority3.o: priority3.c
+	$(CC) $(CFLAGS) -c priority3.c
+priority3: priority3.o start.o
+	$(LD) $(LDFLAGS) start.o priority3.o -o priority3.coff
+	$(COFF2NOFF) priority3.coff priority3
+
 add.o: add.c
 	$(CC) $(CFLAGS) -c add.c
 
 add: add.o start.o
 	$(LD) $(LDFLAGS) start.o add.o -o add.coff
 	$(COFF2NOFF) add.coff add
+
+child.o: child.c
+	$(CC) $(CFLAGS) -c child.c
+
+child: child.o start.o
+	$(LD) $(LDFLAGS) start.o child.o -o child.coff
+	$(COFF2NOFF) child.coff child
 
 abs.o: abs.c
 	$(CC) $(CFLAGS) -c abs.c

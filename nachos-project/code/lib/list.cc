@@ -125,6 +125,7 @@ T List<T>::RemoveFront() {
     } else {
         first = element->next;
     }
+    //cout<<thing->priority<<endl;
     numInList--;
     delete element;
     return thing;

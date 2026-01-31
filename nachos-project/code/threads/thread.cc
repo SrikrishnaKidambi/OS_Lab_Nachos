@@ -21,6 +21,8 @@
 #include "switch.h"
 #include "synch.h"
 #include "sysdep.h"
+//#include <cstdlib>
+//#include <ctime>
 
 // this is put at the top of the execution stack, for detecting stack overflows
 const int STACK_FENCEPOST = 0xdedbeef;
@@ -33,9 +35,16 @@ const int STACK_FENCEPOST = 0xdedbeef;
 //	"threadName" is an arbitrary string, useful for debugging.
 //----------------------------------------------------------------------
 
-Thread::Thread(char *threadName, bool _has_dynamic_name /*=false*/) {
+Thread::Thread(char *threadName, int pri, bool _has_dynamic_name /*=false*/) {
+
+  //  srand(time(0));
+    //int random_number = std::rand() % 10 + 1;
+    cout<< "The thread "<<(threadName? threadName: "NULL")<<" has the priority "<<pri<<endl;
     has_dynamic_name = _has_dynamic_name;
     name = threadName;
+    //priority = random_number;
+    priority = pri; //assigns the user defined priority
+    //cout<<priority<<endl;
     stackTop = NULL;
     stack = NULL;
     status = JUST_CREATED;
@@ -199,10 +208,10 @@ void Thread::Yield() {
     ASSERT(this == kernel->currentThread);
 
     DEBUG(dbgThread, "Yielding thread: " << name);
-
+    kernel->scheduler->ReadyToRun(this);
     nextThread = kernel->scheduler->FindNextToRun();
     if (nextThread != NULL) {
-        kernel->scheduler->ReadyToRun(this);
+        //kernel->scheduler->ReadyToRun(this);
         kernel->scheduler->Run(nextThread, FALSE);
     }
     (void)kernel->interrupt->SetLevel(oldLevel);

@@ -4,8 +4,10 @@ int main() {
     unsigned int result;
 
     result = Abs(-8);
+    PrintString("The absolute value is: ");
     PrintNum(result);
-    Halt();
+    PrintString("\n");
+    //Halt();
     /* not reached */
 }
 

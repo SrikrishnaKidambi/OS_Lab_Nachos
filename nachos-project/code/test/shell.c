@@ -23,7 +23,7 @@ int main() {
         buffer[--i] = '\0';
 
         if (i > 0) {
-            newProc = Exec(buffer);
+            newProc = Exec(buffer,0);
             Join(newProc);
         }
     }

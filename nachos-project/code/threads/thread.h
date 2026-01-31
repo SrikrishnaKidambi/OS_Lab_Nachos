@@ -43,6 +43,7 @@
 
 #include "machine.h"
 #include "addrspace.h"
+#include <climits>
 
 // CPU register state to be saved on context switch.
 // The x86 needs to save only a few registers,
@@ -80,13 +81,13 @@ class Thread {
     bool has_dynamic_name;  // true if the thread name is dynamically allocated
 
    public:
-    Thread(char *debugName,
+    Thread(char *debugName,int pri=INT_MAX,
            bool _has_dynamic_name = false);  // initialize a Thread
     ~Thread();                               // deallocate a Thread
                                              // NOTE -- thread being deleted
                                              // must not be running when delete
                                              // is called
-
+    int priority;
     int processID;
     int parrentID;
     int exitStatus;

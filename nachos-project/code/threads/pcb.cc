@@ -48,11 +48,11 @@ void StartProcess_2(void* pid) {
                     // by doing the syscall "exit"
 }
 
-int PCB::Exec(char* filename, int id) {
+int PCB::Exec(char* filename, int id,int priority) {
     // cerr << filename << ' ' << pid << endl;
     multex->P();
 
-    this->thread = new Thread(filename, true);
+    this->thread = new Thread(filename, priority,true);
     if (this->thread == NULL) {
         printf("\nPCB::Exec: Not enough memory!\n");
         multex->V();  // Nha CPU de nhuong CPU cho tien trinh khac

@@ -195,7 +195,7 @@ int SysSeek(int seekPos, int fileId) {
     return kernel->fileSystem->Seek(seekPos, fileId);
 }
 
-int SysExec(char* name) {
+int SysExec(char* name,int priority) {
     // cerr << "call: `" << name  << "`"<< endl;
     OpenFile* oFile = kernel->fileSystem->Open(name);
     if (oFile == NULL) {
@@ -206,7 +206,7 @@ int SysExec(char* name) {
     delete oFile;
 
     // Return child process id
-    return kernel->pTab->ExecUpdate(name);
+    return kernel->pTab->ExecUpdate(name,priority);
 }
 
 int SysJoin(int id) { return kernel->pTab->JoinUpdate(id); }
