@@ -58,7 +58,7 @@ void Alarm::CallBack() {
     //cout<<"current time: "<<now<<endl;
     while(!sleepList->IsEmpty()){
 	    Thread* th = sleepList->RemoveFront();
-	    cout<<"Current one is: "<<th->priority<<" and wakeUptime: "<<th->wakeUpTime<<" current time "<<now<<endl;
+//	    cout<<"Current one is: "<<th->priority<<" and wakeUptime: "<<th->wakeUpTime<<" current time "<<now<<endl;
 	    if(th->wakeUpTime <= now){
 		    th->wakeUpTime=0;
 		    kernel->scheduler->readyListPush(th);

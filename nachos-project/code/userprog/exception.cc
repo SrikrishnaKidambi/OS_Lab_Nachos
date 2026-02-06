@@ -330,6 +330,7 @@ void handle_SC_Sleep() {
     int secs = kernel->machine->ReadRegister(4); //This extracts the time in seconds passed as argument by the user
     SysSleep(secs);
     //ASSERTNOTREACHED();
+    return move_program_counter();
 }
     
 /**
