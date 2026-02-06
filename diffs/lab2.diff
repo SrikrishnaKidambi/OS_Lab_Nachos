@@ -1,0 +1,1043 @@
+diff --git a/nachos-project/code/build.linux/Makefile b/nachos-project/code/build.linux/Makefile
+index 3def870..b3a3189 100755
+--- a/nachos-project/code/build.linux/Makefile
++++ b/nachos-project/code/build.linux/Makefile
+@@ -200,7 +200,7 @@ DEFINES =  -DFILESYS_STUB -DRDATA -DSIM_FIX
+ # break the thread system.  You might want to use -fno-inline if
+ # you need to call some inline functions from the debugger.
+ 
+-CFLAGS = -g -Wall $(INCPATH) $(DEFINES) $(HOSTCFLAGS) -DCHANGED -m32
++CFLAGS = -ggdb3 -Wall $(INCPATH) $(DEFINES) $(HOSTCFLAGS) -DCHANGED -m32
+ LDFLAGS = -m32
+ CPP_AS_FLAGS= -m32
+ 
+diff --git a/nachos-project/code/build.linux/Makefile.dep b/nachos-project/code/build.linux/Makefile.dep
+index d7bc40f..f9ce00b 100755
+--- a/nachos-project/code/build.linux/Makefile.dep
++++ b/nachos-project/code/build.linux/Makefile.dep
+@@ -832,8 +832,16 @@ interrupt.o: ../machine/interrupt.cc /usr/include/stdc-predef.h \
+  ../machine/callback.h ../threads/main.h ../threads/kernel.h \
+  ../threads/thread.h ../machine/machine.h ../machine/translate.h \
+  ../userprog/addrspace.h ../filesys/filesys.h ../filesys/openfile.h \
+- ../filesys/filetable.h ../threads/scheduler.h ../machine/stats.h \
+- ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
++ ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../threads/scheduler.h \
++ ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+  ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+  ../threads/pcb.h
+ stats.o: ../machine/stats.cc /usr/include/stdc-predef.h \
+@@ -1143,8 +1151,16 @@ timer.o: ../machine/timer.cc /usr/include/stdc-predef.h \
+  /usr/include/string.h /usr/include/strings.h ../threads/kernel.h \
+  ../threads/thread.h ../machine/machine.h ../machine/translate.h \
+  ../userprog/addrspace.h ../filesys/filesys.h ../filesys/openfile.h \
+- ../filesys/filetable.h ../threads/scheduler.h ../lib/list.h \
+- ../lib/list.cc ../machine/interrupt.h ../machine/stats.h \
++ ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../threads/scheduler.h \
++ ../lib/list.h ../lib/list.cc ../machine/interrupt.h ../machine/stats.h \
+  ../threads/alarm.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
+  ../threads/ptable.h ../threads/pcb.h
+ console.o: ../machine/console.cc /usr/include/stdc-predef.h \
+@@ -1302,8 +1318,16 @@ console.o: ../machine/console.cc /usr/include/stdc-predef.h \
+  /usr/include/string.h /usr/include/strings.h ../threads/kernel.h \
+  ../threads/thread.h ../machine/machine.h ../machine/translate.h \
+  ../userprog/addrspace.h ../filesys/filesys.h ../filesys/openfile.h \
+- ../filesys/filetable.h ../threads/scheduler.h ../lib/list.h \
+- ../lib/list.cc ../machine/interrupt.h ../machine/stats.h \
++ ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../threads/scheduler.h \
++ ../lib/list.h ../lib/list.cc ../machine/interrupt.h ../machine/stats.h \
+  ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+  ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+  ../threads/pcb.h
+@@ -1461,7 +1485,15 @@ machine.o: ../machine/machine.cc /usr/include/stdc-predef.h \
+  /usr/include/c++/13/bits/istream.tcc /usr/include/c++/13/stdlib.h \
+  /usr/include/string.h /usr/include/strings.h ../threads/kernel.h \
+  ../threads/thread.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../threads/scheduler.h \
++ ../filesys/openfile.h ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../threads/scheduler.h \
+  ../lib/list.h ../lib/list.cc ../machine/interrupt.h \
+  ../machine/callback.h ../machine/stats.h ../threads/alarm.h \
+  ../machine/timer.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
+@@ -1621,11 +1653,19 @@ mipssim.o: ../machine/mipssim.cc /usr/include/stdc-predef.h \
+  ../machine/translate.h ../machine/mipssim.h ../threads/main.h \
+  ../threads/kernel.h ../threads/thread.h ../userprog/addrspace.h \
+  ../filesys/filesys.h ../filesys/openfile.h ../filesys/filetable.h \
+- ../threads/scheduler.h ../lib/list.h ../lib/list.cc \
+- ../machine/interrupt.h ../machine/callback.h ../machine/stats.h \
+- ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+- ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+- ../threads/pcb.h
++ /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../threads/scheduler.h \
++ ../lib/list.h ../lib/list.cc ../machine/interrupt.h \
++ ../machine/callback.h ../machine/stats.h ../threads/alarm.h \
++ ../machine/timer.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
++ ../threads/ptable.h ../threads/pcb.h
+ translate.o: ../machine/translate.cc /usr/include/stdc-predef.h \
+  ../lib/copyright.h ../threads/main.h ../lib/debug.h ../lib/utility.h \
+  ../lib/sysdep.h /usr/include/c++/13/iostream \
+@@ -1781,11 +1821,19 @@ translate.o: ../machine/translate.cc /usr/include/stdc-predef.h \
+  /usr/include/string.h /usr/include/strings.h ../threads/kernel.h \
+  ../threads/thread.h ../machine/machine.h ../machine/translate.h \
+  ../userprog/addrspace.h ../filesys/filesys.h ../filesys/openfile.h \
+- ../filesys/filetable.h ../threads/scheduler.h ../lib/list.h \
+- ../lib/list.cc ../machine/interrupt.h ../machine/callback.h \
+- ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+- ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+- ../threads/pcb.h
++ ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../threads/scheduler.h \
++ ../lib/list.h ../lib/list.cc ../machine/interrupt.h \
++ ../machine/callback.h ../machine/stats.h ../threads/alarm.h \
++ ../machine/timer.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
++ ../threads/ptable.h ../threads/pcb.h
+ network.o: ../machine/network.cc /usr/include/stdc-predef.h \
+  ../lib/copyright.h ../machine/network.h ../lib/utility.h \
+  ../machine/callback.h ../threads/main.h ../lib/debug.h ../lib/sysdep.h \
+@@ -1941,8 +1989,16 @@ network.o: ../machine/network.cc /usr/include/stdc-predef.h \
+  /usr/include/string.h /usr/include/strings.h ../threads/kernel.h \
+  ../threads/thread.h ../machine/machine.h ../machine/translate.h \
+  ../userprog/addrspace.h ../filesys/filesys.h ../filesys/openfile.h \
+- ../filesys/filetable.h ../threads/scheduler.h ../lib/list.h \
+- ../lib/list.cc ../machine/interrupt.h ../machine/stats.h \
++ ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../threads/scheduler.h \
++ ../lib/list.h ../lib/list.cc ../machine/interrupt.h ../machine/stats.h \
+  ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+  ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+  ../threads/pcb.h
+@@ -2101,7 +2157,15 @@ disk.o: ../machine/disk.cc /usr/include/stdc-predef.h ../lib/copyright.h \
+  /usr/include/string.h /usr/include/strings.h ../threads/main.h \
+  ../threads/kernel.h ../threads/thread.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../threads/scheduler.h \
++ ../filesys/openfile.h ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../threads/scheduler.h \
+  ../lib/list.h ../lib/list.cc ../machine/interrupt.h ../machine/stats.h \
+  ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+  ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+@@ -2262,9 +2326,17 @@ alarm.o: ../threads/alarm.cc /usr/include/stdc-predef.h \
+  /usr/include/string.h /usr/include/strings.h ../threads/kernel.h \
+  ../threads/thread.h ../machine/machine.h ../machine/translate.h \
+  ../userprog/addrspace.h ../filesys/filesys.h ../filesys/openfile.h \
+- ../filesys/filetable.h ../threads/scheduler.h ../lib/list.h \
+- ../lib/list.cc ../machine/interrupt.h ../machine/stats.h ../lib/bitmap.h \
+- ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
++ ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../threads/scheduler.h \
++ ../lib/list.h ../lib/list.cc ../machine/interrupt.h ../machine/stats.h \
++ ../lib/bitmap.h ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+  ../threads/pcb.h
+ kernel.o: ../threads/kernel.cc /usr/include/stdc-predef.h \
+  ../lib/copyright.h ../lib/debug.h ../lib/utility.h ../lib/sysdep.h \
+@@ -2420,7 +2492,15 @@ kernel.o: ../threads/kernel.cc /usr/include/stdc-predef.h \
+  /usr/include/string.h /usr/include/strings.h ../threads/main.h \
+  ../threads/kernel.h ../threads/thread.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../threads/scheduler.h \
++ ../filesys/openfile.h ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../threads/scheduler.h \
+  ../lib/list.h ../lib/list.cc ../machine/interrupt.h \
+  ../machine/callback.h ../machine/stats.h ../threads/alarm.h \
+  ../machine/timer.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
+@@ -2582,11 +2662,19 @@ main.o: ../threads/main.cc /usr/include/stdc-predef.h ../lib/copyright.h \
+  /usr/include/string.h /usr/include/strings.h ../threads/kernel.h \
+  ../threads/thread.h ../machine/machine.h ../machine/translate.h \
+  ../userprog/addrspace.h ../filesys/filesys.h ../filesys/openfile.h \
+- ../filesys/filetable.h ../threads/scheduler.h ../lib/list.h \
+- ../lib/list.cc ../machine/interrupt.h ../machine/callback.h \
+- ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+- ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+- ../threads/pcb.h
++ ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../threads/scheduler.h \
++ ../lib/list.h ../lib/list.cc ../machine/interrupt.h \
++ ../machine/callback.h ../machine/stats.h ../threads/alarm.h \
++ ../machine/timer.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
++ ../threads/ptable.h ../threads/pcb.h
+ scheduler.o: ../threads/scheduler.cc /usr/include/stdc-predef.h \
+  ../lib/copyright.h ../lib/debug.h ../lib/utility.h ../lib/sysdep.h \
+  /usr/include/c++/13/iostream /usr/include/c++/13/bits/requires_hosted.h \
+@@ -2741,7 +2829,15 @@ scheduler.o: ../threads/scheduler.cc /usr/include/stdc-predef.h \
+  /usr/include/string.h /usr/include/strings.h ../threads/scheduler.h \
+  ../lib/list.h ../lib/list.cc ../threads/thread.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../threads/main.h \
++ ../filesys/openfile.h ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../threads/main.h \
+  ../threads/kernel.h ../machine/interrupt.h ../machine/callback.h \
+  ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+  ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+@@ -2900,7 +2996,15 @@ synch.o: ../threads/synch.cc /usr/include/stdc-predef.h \
+  /usr/include/c++/13/bits/istream.tcc /usr/include/c++/13/stdlib.h \
+  /usr/include/string.h /usr/include/strings.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../lib/list.h \
++ ../filesys/openfile.h ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../lib/list.h \
+  ../lib/debug.h ../lib/list.cc ../threads/main.h ../threads/kernel.h \
+  ../threads/scheduler.h ../machine/interrupt.h ../machine/callback.h \
+  ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+@@ -3061,7 +3165,15 @@ synchlist.o: ../threads/synchlist.cc /usr/include/stdc-predef.h \
+  /usr/include/string.h /usr/include/strings.h ../lib/list.cc \
+  ../threads/synch.h ../threads/thread.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../threads/main.h \
++ ../filesys/openfile.h ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../threads/main.h \
+  ../threads/kernel.h ../threads/scheduler.h ../machine/interrupt.h \
+  ../machine/callback.h ../machine/stats.h ../threads/alarm.h \
+  ../machine/timer.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
+@@ -3219,7 +3331,15 @@ thread.o: ../threads/thread.cc /usr/include/stdc-predef.h \
+  /usr/include/c++/13/bits/istream.tcc /usr/include/c++/13/stdlib.h \
+  /usr/include/string.h /usr/include/strings.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../threads/switch.h \
++ ../filesys/openfile.h ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../threads/switch.h \
+  ../threads/synch.h ../lib/list.h ../lib/debug.h ../lib/list.cc \
+  ../threads/main.h ../threads/kernel.h ../threads/scheduler.h \
+  ../machine/interrupt.h ../machine/callback.h ../machine/stats.h \
+@@ -3380,7 +3500,15 @@ ptable.o: ../threads/ptable.cc /usr/include/stdc-predef.h \
+  /usr/include/c++/13/bits/istream.tcc /usr/include/c++/13/stdlib.h \
+  /usr/include/string.h /usr/include/strings.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../lib/list.h \
++ ../filesys/openfile.h ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../lib/list.h \
+  ../lib/debug.h ../lib/list.cc ../threads/main.h ../threads/kernel.h \
+  ../threads/scheduler.h ../machine/interrupt.h ../machine/callback.h \
+  ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+@@ -3539,7 +3667,15 @@ pcb.o: ../threads/pcb.cc /usr/include/stdc-predef.h ../threads/synch.h \
+  /usr/include/c++/13/bits/istream.tcc /usr/include/c++/13/stdlib.h \
+  /usr/include/string.h /usr/include/strings.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../lib/list.h \
++ ../filesys/openfile.h ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../lib/list.h \
+  ../lib/debug.h ../lib/list.cc ../threads/main.h ../threads/kernel.h \
+  ../threads/scheduler.h ../machine/interrupt.h ../machine/callback.h \
+  ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+@@ -3699,7 +3835,15 @@ stable.o: ../threads/stable.cc /usr/include/stdc-predef.h \
+  /usr/include/c++/13/bits/istream.tcc /usr/include/c++/13/stdlib.h \
+  /usr/include/string.h /usr/include/strings.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../lib/list.h \
++ ../filesys/openfile.h ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../lib/list.h \
+  ../lib/debug.h ../lib/list.cc ../threads/main.h ../threads/kernel.h \
+  ../threads/scheduler.h ../machine/interrupt.h ../machine/callback.h \
+  ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+@@ -3859,7 +4003,15 @@ sem.o: ../threads/sem.cc /usr/include/stdc-predef.h ../threads/sem.h \
+  /usr/include/c++/13/bits/istream.tcc /usr/include/c++/13/stdlib.h \
+  /usr/include/string.h /usr/include/strings.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../lib/list.h \
++ ../filesys/openfile.h ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../lib/list.h \
+  ../lib/debug.h ../lib/list.cc ../threads/main.h ../threads/kernel.h \
+  ../threads/scheduler.h ../machine/interrupt.h ../machine/callback.h \
+  ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+@@ -4019,11 +4171,20 @@ addrspace.o: ../userprog/addrspace.cc /usr/include/stdc-predef.h \
+  /usr/include/string.h /usr/include/strings.h ../threads/kernel.h \
+  ../threads/thread.h ../machine/machine.h ../machine/translate.h \
+  ../userprog/addrspace.h ../filesys/filesys.h ../filesys/openfile.h \
+- ../filesys/filetable.h ../threads/scheduler.h ../lib/list.h \
+- ../lib/list.cc ../machine/interrupt.h ../machine/callback.h \
+- ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+- ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+- ../threads/pcb.h ../userprog/noff.h ../threads/synch.h
++ ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../threads/scheduler.h \
++ ../lib/list.h ../lib/list.cc ../machine/interrupt.h \
++ ../machine/callback.h ../machine/stats.h ../threads/alarm.h \
++ ../machine/timer.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
++ ../threads/ptable.h ../threads/pcb.h ../userprog/noff.h \
++ ../threads/synch.h
+ exception.o: ../userprog/exception.cc /usr/include/stdc-predef.h \
+  ../lib/copyright.h ../threads/main.h ../lib/debug.h ../lib/utility.h \
+  ../lib/sysdep.h /usr/include/c++/13/iostream \
+@@ -4179,13 +4340,21 @@ exception.o: ../userprog/exception.cc /usr/include/stdc-predef.h \
+  /usr/include/string.h /usr/include/strings.h ../threads/kernel.h \
+  ../threads/thread.h ../machine/machine.h ../machine/translate.h \
+  ../userprog/addrspace.h ../filesys/filesys.h ../filesys/openfile.h \
+- ../filesys/filetable.h ../threads/scheduler.h ../lib/list.h \
+- ../lib/list.cc ../machine/interrupt.h ../machine/callback.h \
+- ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+- ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+- ../threads/pcb.h ../userprog/syscall.h ../userprog/errno.h \
+- ../userprog/ksyscall.h ../userprog/synchconsole.h ../machine/console.h \
+- ../threads/synch.h ../userprog/ksyscallhelper.h
++ ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../threads/scheduler.h \
++ ../lib/list.h ../lib/list.cc ../machine/interrupt.h \
++ ../machine/callback.h ../machine/stats.h ../threads/alarm.h \
++ ../machine/timer.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
++ ../threads/ptable.h ../threads/pcb.h ../userprog/syscall.h \
++ ../userprog/errno.h ../userprog/ksyscall.h ../userprog/synchconsole.h \
++ ../machine/console.h ../threads/synch.h ../userprog/ksyscallhelper.h
+ synchconsole.o: ../userprog/synchconsole.cc /usr/include/stdc-predef.h \
+  ../lib/copyright.h ../userprog/synchconsole.h ../lib/utility.h \
+  ../machine/callback.h ../machine/console.h ../threads/synch.h \
+@@ -4341,7 +4510,15 @@ synchconsole.o: ../userprog/synchconsole.cc /usr/include/stdc-predef.h \
+  /usr/include/c++/13/bits/istream.tcc /usr/include/c++/13/stdlib.h \
+  /usr/include/string.h /usr/include/strings.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../lib/list.h \
++ ../filesys/openfile.h ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../lib/list.h \
+  ../lib/debug.h ../lib/list.cc ../threads/main.h ../threads/kernel.h \
+  ../threads/scheduler.h ../machine/interrupt.h ../machine/stats.h \
+  ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+@@ -4657,11 +4834,19 @@ filehdr.o: ../filesys/filehdr.cc /usr/include/stdc-predef.h \
+  /usr/include/string.h /usr/include/strings.h ../lib/debug.h \
+  ../filesys/synchdisk.h ../threads/synch.h ../threads/thread.h \
+  ../machine/machine.h ../machine/translate.h ../userprog/addrspace.h \
+- ../filesys/filesys.h ../filesys/filetable.h ../lib/list.h ../lib/list.cc \
+- ../threads/main.h ../threads/kernel.h ../threads/scheduler.h \
+- ../machine/interrupt.h ../machine/stats.h ../threads/alarm.h \
+- ../machine/timer.h ../threads/stable.h ../threads/sem.h \
+- ../threads/ptable.h ../threads/pcb.h
++ ../filesys/filesys.h ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../lib/list.h \
++ ../lib/list.cc ../threads/main.h ../threads/kernel.h \
++ ../threads/scheduler.h ../machine/interrupt.h ../machine/stats.h \
++ ../threads/alarm.h ../machine/timer.h ../threads/stable.h \
++ ../threads/sem.h ../threads/ptable.h ../threads/pcb.h
+ filesys.o: ../filesys/filesys.cc /usr/include/stdc-predef.h \
+  ../lib/copyright.h ../lib/sysdep.h /usr/include/c++/13/iostream \
+  /usr/include/c++/13/bits/requires_hosted.h \
+@@ -4817,11 +5002,19 @@ filesys.o: ../filesys/filesys.cc /usr/include/stdc-predef.h \
+  ../lib/utility.h ../filesys/filetable.h ../filesys/filesys.h \
+  ../threads/kernel.h ../lib/debug.h ../threads/thread.h \
+  ../machine/machine.h ../machine/translate.h ../userprog/addrspace.h \
+- ../threads/scheduler.h ../lib/list.h ../lib/list.cc \
+- ../machine/interrupt.h ../machine/callback.h ../machine/stats.h \
+- ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+- ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+- ../threads/pcb.h ../threads/main.h
++ /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../threads/scheduler.h \
++ ../lib/list.h ../lib/list.cc ../machine/interrupt.h \
++ ../machine/callback.h ../machine/stats.h ../threads/alarm.h \
++ ../machine/timer.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
++ ../threads/ptable.h ../threads/pcb.h ../threads/main.h
+ pbitmap.o: ../filesys/pbitmap.cc /usr/include/stdc-predef.h \
+  ../lib/copyright.h ../filesys/pbitmap.h ../lib/bitmap.h ../lib/utility.h \
+  ../filesys/openfile.h ../lib/sysdep.h /usr/include/c++/13/iostream \
+@@ -5131,7 +5324,15 @@ synchdisk.o: ../filesys/synchdisk.cc /usr/include/stdc-predef.h \
+  /usr/include/c++/13/bits/istream.tcc /usr/include/c++/13/stdlib.h \
+  /usr/include/string.h /usr/include/strings.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../lib/list.h \
++ ../filesys/openfile.h ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../lib/list.h \
+  ../lib/debug.h ../lib/list.cc ../threads/main.h ../threads/kernel.h \
+  ../threads/scheduler.h ../machine/interrupt.h ../machine/stats.h \
+  ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+@@ -5293,7 +5494,15 @@ post.o: ../network/post.cc /usr/include/stdc-predef.h ../lib/copyright.h \
+  /usr/include/string.h /usr/include/strings.h ../lib/list.cc \
+  ../threads/synch.h ../threads/thread.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../threads/main.h \
++ ../filesys/openfile.h ../filesys/filetable.h /usr/include/c++/13/climits \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
++ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
++ /usr/include/linux/limits.h \
++ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
++ /usr/include/x86_64-linux-gnu/bits/uio_lim.h ../threads/main.h \
+  ../threads/kernel.h ../threads/scheduler.h ../machine/interrupt.h \
+  ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+  ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+diff --git a/nachos-project/code/lib/list.cc b/nachos-project/code/lib/list.cc
+index 0ea90a5..c4089e5 100755
+--- a/nachos-project/code/lib/list.cc
++++ b/nachos-project/code/lib/list.cc
+@@ -125,6 +125,7 @@ T List<T>::RemoveFront() {
+     } else {
+         first = element->next;
+     }
++    //cout<<thing->priority<<endl;
+     numInList--;
+     delete element;
+     return thing;
+diff --git a/nachos-project/code/test/Makefile b/nachos-project/code/test/Makefile
+index 6a42235..176ed5e 100755
+--- a/nachos-project/code/test/Makefile
++++ b/nachos-project/code/test/Makefile
+@@ -112,7 +112,7 @@ ifeq ($(hosttype),unknown)
+ PROGRAMS = unknownhost
+ else
+ # change this if you create a new test program!
+-PROGRAMS = abs add halt shell matmult sort segments test_syscall num_io char_io random str_io ascii bubblesort help create_file open_file readwrite exec test_sem sinhvien voinuoc main
++PROGRAMS = prioritySchedulerTest priority1 priority2 priority3 child abs add halt shell matmult sort segments test_syscall num_io char_io random str_io ascii bubblesort help create_file open_file readwrite exec test_sem sinhvien voinuoc main
+ endif
+ 
+ all: $(PROGRAMS)
+@@ -126,6 +126,30 @@ halt: halt.o start.o
+ 	$(LD) $(LDFLAGS) start.o halt.o -o halt.coff
+ 	$(COFF2NOFF) halt.coff halt
+ 
++prioritySchedulerTest.o: prioritySchedulerTest.c
++	$(CC) $(CFLAGS) -c prioritySchedulerTest.c
++
++prioritySchedulerTest: prioritySchedulerTest.o start.o
++	$(LD) $(LDFLAGS) start.o prioritySchedulerTest.o -o prioritySchedulerTest.coff
++	$(COFF2NOFF) prioritySchedulerTest.coff prioritySchedulerTest
++priority1.o: priority1.c
++	$(CC) $(CFLAGS) -c priority1.c
++priority1: priority1.o start.o
++	$(LD) $(LDFLAGS) start.o priority1.o -o priority1.coff
++	$(COFF2NOFF) priority1.coff priority1
++
++priority2.o: priority2.c
++	$(CC) $(CFLAGS) -c priority2.c
++priority2: priority2.o start.o
++	$(LD) $(LDFLAGS) start.o priority2.o -o priority2.coff
++	$(COFF2NOFF) priority2.coff priority2
++
++priority3.o: priority3.c
++	$(CC) $(CFLAGS) -c priority3.c
++priority3: priority3.o start.o
++	$(LD) $(LDFLAGS) start.o priority3.o -o priority3.coff
++	$(COFF2NOFF) priority3.coff priority3
++
+ add.o: add.c
+ 	$(CC) $(CFLAGS) -c add.c
+ 
+@@ -133,6 +157,13 @@ add: add.o start.o
+ 	$(LD) $(LDFLAGS) start.o add.o -o add.coff
+ 	$(COFF2NOFF) add.coff add
+ 
++child.o: child.c
++	$(CC) $(CFLAGS) -c child.c
++
++child: child.o start.o
++	$(LD) $(LDFLAGS) start.o child.o -o child.coff
++	$(COFF2NOFF) child.coff child
++
+ abs.o: abs.c
+ 	$(CC) $(CFLAGS) -c abs.c
+ 
+diff --git a/nachos-project/code/test/abs.c b/nachos-project/code/test/abs.c
+index 1a01efe..4d14bb0 100755
+--- a/nachos-project/code/test/abs.c
++++ b/nachos-project/code/test/abs.c
+@@ -4,8 +4,10 @@ int main() {
+     unsigned int result;
+ 
+     result = Abs(-8);
++    PrintString("The absolute value is: ");
+     PrintNum(result);
+-    Halt();
++    PrintString("\n");
++    //Halt();
+     /* not reached */
+ }
+ 
+diff --git a/nachos-project/code/test/add.c b/nachos-project/code/test/add.c
+index 70b6925..d66dc45 100755
+--- a/nachos-project/code/test/add.c
++++ b/nachos-project/code/test/add.c
+@@ -11,7 +11,9 @@ int main() {
+     int result;
+ 
+     result = Add(42, 23);
+-
+-    Halt();
++    PrintString("The addition result is: ");
++    PrintNum(result);
++    PrintString("\n");
++    //Halt();
+     /* not reached */
+ }
+diff --git a/nachos-project/code/test/child.c b/nachos-project/code/test/child.c
+new file mode 100644
+index 0000000..22d75c1
+--- /dev/null
++++ b/nachos-project/code/test/child.c
+@@ -0,0 +1,12 @@
++#include "syscall.h"
++#define stdin 0
++#define stdout 1
++
++int main(){
++	int i,j;
++	for (i = 0;i<1000;i++){
++		for(j=0;j<10000;j++);
++		PrintString("Child process running\n");
++	}
++	return 0;
++}
+diff --git a/nachos-project/code/test/exec.c b/nachos-project/code/test/exec.c
+index feadac1..72737bd 100755
+--- a/nachos-project/code/test/exec.c
++++ b/nachos-project/code/test/exec.c
+@@ -8,10 +8,16 @@
+ 
+ int main() {
+     int pid;
+-    pid = Exec("num_io");
++    pid = Exec("../test/child",3);
+     if (pid < 0) {
+         Write("Exec failed: ", 14, stdout);
+         PrintNum(pid);
+-    } else
+-        Join(pid);
++    } else{
++	    int i,j;
++	    for(i = 0;i<1000;i++){
++		    for(j=0;j<10000;j++);
++		    PrintString("Parent process running\n");
++	    }
++	    Join(pid);
++    }
+ }
+diff --git a/nachos-project/code/test/main.c b/nachos-project/code/test/main.c
+index b91b823..7217cc0 100755
+--- a/nachos-project/code/test/main.c
++++ b/nachos-project/code/test/main.c
+@@ -69,13 +69,13 @@ int main() {
+ 
+     /***********Spawn child process**********/
+     for (i = 0; i < n; i++) {
+-        students[i] = Exec("sinhvien");
++        students[i] = Exec("sinhvien",0);
+         if (students[i] == -1) {
+             PrintString("Create student failed\n");
+             return 1;
+         }
+     }
+-    water_machine = Exec("voinuoc");
++    water_machine = Exec("voinuoc",0);
+     if (water_machine == 1) {
+         PrintString("Create water machine failed\n");
+         return 1;
+diff --git a/nachos-project/code/test/priority1.c b/nachos-project/code/test/priority1.c
+new file mode 100644
+index 0000000..dcf92af
+--- /dev/null
++++ b/nachos-project/code/test/priority1.c
+@@ -0,0 +1,11 @@
++#include "syscall.h"
++#define stdin 0
++#define stdout 1
++
++int main(){
++        int i,j;
++	for(j=0;j<10;j++){
++        for(i=0;i<10000;i++);
++        PrintString("prgrm 1\n");}
++        return 0;
++}
+diff --git a/nachos-project/code/test/priority2.c b/nachos-project/code/test/priority2.c
+new file mode 100644
+index 0000000..c5ed5c9
+--- /dev/null
++++ b/nachos-project/code/test/priority2.c
+@@ -0,0 +1,11 @@
++#include "syscall.h"
++#define stdin 0
++#define stdout 1
++
++int main(){
++        int i,j;
++        for(j=0;j<10;j++){
++        for(i=0;i<10000;i++);
++        PrintString("prgrm 2\n");}
++        return 0;
++}
+diff --git a/nachos-project/code/test/priority3.c b/nachos-project/code/test/priority3.c
+new file mode 100644
+index 0000000..9dc5f37
+--- /dev/null
++++ b/nachos-project/code/test/priority3.c
+@@ -0,0 +1,11 @@
++#include "syscall.h"
++#define stdin 0
++#define stdout 1
++
++int main(){
++        int i,j;
++        for(j=0;j<10;j++){
++        for(i=0;i<10000;i++);
++        PrintString("prgrm 3\n");}
++        return 0;
++}
+diff --git a/nachos-project/code/test/prioritySchedulerTest.c b/nachos-project/code/test/prioritySchedulerTest.c
+new file mode 100644
+index 0000000..ebd4451
+--- /dev/null
++++ b/nachos-project/code/test/prioritySchedulerTest.c
+@@ -0,0 +1,18 @@
++#include "syscall.h"
++#define stdin 0
++#define stdout 1
++
++int main(){
++	int p1 = Exec("../test/priority1",12);
++	int p2 = Exec("../test/priority2",17);
++	int p3 = Exec("../test/priority3",2);
++	
++	//int p1 = Exec("../test/abs",8);
++	//int p2 = Exec("../test/add",10);
++
++	Join(p1);
++	Join(p2);
++	Join(p3);
++
++	Halt();
++}
+diff --git a/nachos-project/code/test/shell.c b/nachos-project/code/test/shell.c
+index a1d8011..58bf47d 100755
+--- a/nachos-project/code/test/shell.c
++++ b/nachos-project/code/test/shell.c
+@@ -23,7 +23,7 @@ int main() {
+         buffer[--i] = '\0';
+ 
+         if (i > 0) {
+-            newProc = Exec(buffer);
++            newProc = Exec(buffer,0);
+             Join(newProc);
+         }
+     }
+diff --git a/nachos-project/code/threads/pcb.cc b/nachos-project/code/threads/pcb.cc
+index a740854..da8b404 100755
+--- a/nachos-project/code/threads/pcb.cc
++++ b/nachos-project/code/threads/pcb.cc
+@@ -48,11 +48,11 @@ void StartProcess_2(void* pid) {
+                     // by doing the syscall "exit"
+ }
+ 
+-int PCB::Exec(char* filename, int id) {
++int PCB::Exec(char* filename, int id,int priority) {
+     // cerr << filename << ' ' << pid << endl;
+     multex->P();
+ 
+-    this->thread = new Thread(filename, true);
++    this->thread = new Thread(filename, priority,true);
+     if (this->thread == NULL) {
+         printf("\nPCB::Exec: Not enough memory!\n");
+         multex->V();  // Nha CPU de nhuong CPU cho tien trinh khac
+diff --git a/nachos-project/code/threads/pcb.h b/nachos-project/code/threads/pcb.h
+index dcab368..088be60 100755
+--- a/nachos-project/code/threads/pcb.h
++++ b/nachos-project/code/threads/pcb.h
+@@ -20,7 +20,7 @@ class PCB {
+     PCB(int id);
+     ~PCB();
+ 
+-    int Exec(char *filename, int pid);
++    int Exec(char *filename, int pid,int priority);
+     int GetID();
+     int GetNumWait();
+ 
+diff --git a/nachos-project/code/threads/ptable.cc b/nachos-project/code/threads/ptable.cc
+index 89f8486..a4d2e35 100755
+--- a/nachos-project/code/threads/ptable.cc
++++ b/nachos-project/code/threads/ptable.cc
+@@ -20,7 +20,7 @@ PTable::~PTable() {
+     delete bmsem;
+ }
+ 
+-int PTable::ExecUpdate(char* name) {
++int PTable::ExecUpdate(char* name,int priority) {
+     // Gọi mutex->P(); để giúp tránh tình trạng nạp 2 tiến trình cùng 1 lúc.
+     bmsem->P();
+ 
+@@ -60,7 +60,7 @@ int PTable::ExecUpdate(char* name) {
+     pcb[index]->parentID = kernel->currentThread->processID;
+ 
+     // Gọi thực thi phương thức Exec của lớp PCB.
+-    int pid = pcb[index]->Exec(name, index);
++    int pid = pcb[index]->Exec(name, index,priority);
+ 
+     // Gọi bmsem->V()
+     bmsem->V();
+diff --git a/nachos-project/code/threads/ptable.h b/nachos-project/code/threads/ptable.h
+index 23b2f46..0b61577 100755
+--- a/nachos-project/code/threads/ptable.h
++++ b/nachos-project/code/threads/ptable.h
+@@ -16,7 +16,7 @@ class PTable {
+    public:
+     PTable(int size);
+     ~PTable();
+-    int ExecUpdate(char* name);
++    int ExecUpdate(char* name,int priority);
+     int ExitUpdate(int ec);
+     int JoinUpdate(int id);
+     int GetFreeSlot();
+@@ -25,4 +25,4 @@ class PTable {
+     char* GetFileName(int id);
+ };
+ 
+-#endif
+\ No newline at end of file
++#endif
+diff --git a/nachos-project/code/threads/scheduler.cc b/nachos-project/code/threads/scheduler.cc
+index 1d52916..1336e61 100755
+--- a/nachos-project/code/threads/scheduler.cc
++++ b/nachos-project/code/threads/scheduler.cc
+@@ -29,8 +29,20 @@
+ //	Initially, no ready threads.
+ //----------------------------------------------------------------------
+ 
++int mycompare(Thread* a, Thread* b){
++    if(a == NULL || b == NULL) return 0;
++    //cout<<a->priority<<" and "<<b->priority<<endl;
++    if(a->priority > b->priority){
++	    return -1;
++    }
++    if(a->priority < b->priority) return 1;
++
++    return 0;
++}
++
+ Scheduler::Scheduler() {
+-    readyList = new List<Thread *>;
++   // readyList = new List<Thread *>;
++    readyList = new SortedList<Thread *>(mycompare);
+     toBeDestroyed = NULL;
+ }
+ 
+@@ -54,7 +66,8 @@ void Scheduler::ReadyToRun(Thread *thread) {
+     DEBUG(dbgThread, "Putting thread on ready list: " << thread->getName());
+ 
+     thread->setStatus(READY);
+-    readyList->Append(thread);
++    //readyList->Append(thread);
++    readyList->Insert(thread);
+ }
+ 
+ //----------------------------------------------------------------------
+@@ -73,7 +86,7 @@ Thread *Scheduler::FindNextToRun() {
+     } else {
+         return readyList->RemoveFront();
+     }
+-}
++} 
+ 
+ //----------------------------------------------------------------------
+ // Scheduler::Run
+diff --git a/nachos-project/code/threads/scheduler.h b/nachos-project/code/threads/scheduler.h
+index a96f228..911f0db 100755
+--- a/nachos-project/code/threads/scheduler.h
++++ b/nachos-project/code/threads/scheduler.h
+@@ -35,7 +35,7 @@ class Scheduler {
+     // SelfTest for scheduler is implemented in class Thread
+ 
+    private:
+-    List<Thread*>* readyList;  // queue of threads that are ready to run,
++    SortedList<Thread*>* readyList;  // queue of threads that are ready to run,
+                                // but not running
+     Thread* toBeDestroyed;     // finishing thread to be destroyed
+                                // by the next thread that runs
+diff --git a/nachos-project/code/threads/thread.cc b/nachos-project/code/threads/thread.cc
+index be9f7d6..9a201b9 100755
+--- a/nachos-project/code/threads/thread.cc
++++ b/nachos-project/code/threads/thread.cc
+@@ -21,6 +21,8 @@
+ #include "switch.h"
+ #include "synch.h"
+ #include "sysdep.h"
++//#include <cstdlib>
++//#include <ctime>
+ 
+ // this is put at the top of the execution stack, for detecting stack overflows
+ const int STACK_FENCEPOST = 0xdedbeef;
+@@ -33,9 +35,16 @@ const int STACK_FENCEPOST = 0xdedbeef;
+ //	"threadName" is an arbitrary string, useful for debugging.
+ //----------------------------------------------------------------------
+ 
+-Thread::Thread(char *threadName, bool _has_dynamic_name /*=false*/) {
++Thread::Thread(char *threadName, int pri, bool _has_dynamic_name /*=false*/) {
++
++  //  srand(time(0));
++    //int random_number = std::rand() % 10 + 1;
++    cout<< "The thread "<<(threadName? threadName: "NULL")<<" has the priority "<<pri<<endl;
+     has_dynamic_name = _has_dynamic_name;
+     name = threadName;
++    //priority = random_number;
++    priority = pri; //assigns the user defined priority
++    //cout<<priority<<endl;
+     stackTop = NULL;
+     stack = NULL;
+     status = JUST_CREATED;
+@@ -199,10 +208,10 @@ void Thread::Yield() {
+     ASSERT(this == kernel->currentThread);
+ 
+     DEBUG(dbgThread, "Yielding thread: " << name);
+-
++    kernel->scheduler->ReadyToRun(this);
+     nextThread = kernel->scheduler->FindNextToRun();
+     if (nextThread != NULL) {
+-        kernel->scheduler->ReadyToRun(this);
++        //kernel->scheduler->ReadyToRun(this);
+         kernel->scheduler->Run(nextThread, FALSE);
+     }
+     (void)kernel->interrupt->SetLevel(oldLevel);
+diff --git a/nachos-project/code/threads/thread.h b/nachos-project/code/threads/thread.h
+index 3fbf156..2c6f32c 100755
+--- a/nachos-project/code/threads/thread.h
++++ b/nachos-project/code/threads/thread.h
+@@ -43,6 +43,7 @@
+ 
+ #include "machine.h"
+ #include "addrspace.h"
++#include <climits>
+ 
+ // CPU register state to be saved on context switch.
+ // The x86 needs to save only a few registers,
+@@ -80,13 +81,13 @@ class Thread {
+     bool has_dynamic_name;  // true if the thread name is dynamically allocated
+ 
+    public:
+-    Thread(char *debugName,
++    Thread(char *debugName,int pri=INT_MAX,
+            bool _has_dynamic_name = false);  // initialize a Thread
+     ~Thread();                               // deallocate a Thread
+                                              // NOTE -- thread being deleted
+                                              // must not be running when delete
+                                              // is called
+-
++    int priority;
+     int processID;
+     int parrentID;
+     int exitStatus;
+diff --git a/nachos-project/code/userprog/exception.cc b/nachos-project/code/userprog/exception.cc
+index c93bcc4..369d4cd 100755
+--- a/nachos-project/code/userprog/exception.cc
++++ b/nachos-project/code/userprog/exception.cc
+@@ -310,6 +310,7 @@ void handle_SC_Exec() {
+     virtAddr = kernel->machine->ReadRegister(
+         4);  // doc dia chi ten chuong trinh tu thanh ghi r4
+     char* name;
++    int priority = kernel->machine->ReadRegister(5);
+     name = stringUser2System(virtAddr);  // Lay ten chuong trinh, nap vao kernel
+     if (name == NULL) {
+         DEBUG(dbgSys, "\n Not enough memory in System");
+@@ -318,7 +319,7 @@ void handle_SC_Exec() {
+         return move_program_counter();
+     }
+ 
+-    kernel->machine->WriteRegister(2, SysExec(name));
++    kernel->machine->WriteRegister(2, SysExec(name,priority));
+     // DO NOT DELETE NAME, THE THEARD WILL DELETE IT LATER
+     // delete[] name;
+ 
+diff --git a/nachos-project/code/userprog/ksyscall.h b/nachos-project/code/userprog/ksyscall.h
+index d3e4013..0950834 100755
+--- a/nachos-project/code/userprog/ksyscall.h
++++ b/nachos-project/code/userprog/ksyscall.h
+@@ -195,7 +195,7 @@ int SysSeek(int seekPos, int fileId) {
+     return kernel->fileSystem->Seek(seekPos, fileId);
+ }
+ 
+-int SysExec(char* name) {
++int SysExec(char* name,int priority) {
+     // cerr << "call: `" << name  << "`"<< endl;
+     OpenFile* oFile = kernel->fileSystem->Open(name);
+     if (oFile == NULL) {
+@@ -206,7 +206,7 @@ int SysExec(char* name) {
+     delete oFile;
+ 
+     // Return child process id
+-    return kernel->pTab->ExecUpdate(name);
++    return kernel->pTab->ExecUpdate(name,priority);
+ }
+ 
+ int SysJoin(int id) { return kernel->pTab->JoinUpdate(id); }
+diff --git a/nachos-project/code/userprog/syscall.h b/nachos-project/code/userprog/syscall.h
+index a3b6754..4f993e8 100755
+--- a/nachos-project/code/userprog/syscall.h
++++ b/nachos-project/code/userprog/syscall.h
+@@ -101,7 +101,7 @@ typedef int ThreadId;
+ /* Run the specified executable, with no args */
+ /* This can be implemented as a call to ExecV.
+  */
+-SpaceId Exec(char *exec_name);
++SpaceId Exec(char *exec_name,int priority);
+ 
+ /* Run the executable, stored in the Nachos file "argv[0]", with
+  * parameters stored in argv[1..argc-1] and return the
