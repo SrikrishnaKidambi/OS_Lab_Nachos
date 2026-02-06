@@ -88,6 +88,7 @@ class Thread {
                                              // must not be running when delete
                                              // is called
     int priority;
+    int wakeUpTime;
     int processID;
     int parrentID;
     int exitStatus;
@@ -103,6 +104,7 @@ class Thread {
                                  // other thread is runnable
     void Sleep(bool finishing);  // Put the thread to sleep and
                                  // relinquish the processor
+    void Sleep2(int time);      // give the time to sleep in seconds as input
     void Begin();                // Startup code for the thread
     void Finish();               // The thread is done executing
 

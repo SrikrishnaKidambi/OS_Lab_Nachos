@@ -20,7 +20,17 @@
 //		occur at random, instead of fixed, intervals.
 //----------------------------------------------------------------------
 
-Alarm::Alarm(bool doRandom) { timer = new Timer(doRandom, this); }
+int myCompare(Thread* a, Thread* b){
+	if(a == nullptr || b== nullptr)return 0;
+	if(a->wakeUpTime < b->wakeUpTime) return -1;
+	if(a->wakeUpTime > b->wakeUpTime) return 1;
+	return 0;
+}
+
+Alarm::Alarm(bool doRandom) { 
+	timer = new Timer(doRandom, this); 
+	sleepList = new SortedList<Thread*>(myCompare);
+}
 
 //----------------------------------------------------------------------
 // Alarm::CallBack
@@ -43,7 +53,23 @@ Alarm::Alarm(bool doRandom) { timer = new Timer(doRandom, this); }
 void Alarm::CallBack() {
     Interrupt *interrupt = kernel->interrupt;
     MachineStatus status = interrupt->getStatus();
+    
+    int now = kernel->stats->totalTicks;
+    //cout<<"current time: "<<now<<endl;
+    while(!sleepList->IsEmpty()){
+	    Thread* th = sleepList->RemoveFront();
+	    cout<<"Current one is: "<<th->priority<<" and wakeUptime: "<<th->wakeUpTime<<" current time "<<now<<endl;
+	    if(th->wakeUpTime <= now){
+		    th->wakeUpTime=0;
+		    kernel->scheduler->readyListPush(th);
+	    }
+	    else{
+		    sleepList->Insert(th);
+		    break;
+	    }
+    }
 
+    
     if (status != IdleMode) {
         interrupt->YieldOnReturn();
     }

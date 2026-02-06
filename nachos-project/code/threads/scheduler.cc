@@ -177,3 +177,8 @@ void Scheduler::Print() {
     cout << "Ready list contents:\n";
     readyList->Apply(ThreadPrint);
 }
+
+//Function to push to readyList
+void Scheduler::readyListPush(Thread* th){
+    readyList->Insert(th);
+}

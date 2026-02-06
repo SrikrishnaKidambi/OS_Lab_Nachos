@@ -25,6 +25,7 @@ int SysAdd(int op1, int op2) { return op1 + op2; }
 
 unsigned int SysAbs(int op1) { return op1 > 0 ? op1 : -op1; }
 
+
 int SysReadNum() {
     readUntilBlank();
 
@@ -208,6 +209,7 @@ int SysExec(char* name,int priority) {
     // Return child process id
     return kernel->pTab->ExecUpdate(name,priority);
 }
+void SysSleep(int secs) { kernel->currentThread->Sleep2(secs); }
 
 int SysJoin(int id) { return kernel->pTab->JoinUpdate(id); }
 

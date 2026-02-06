@@ -326,6 +326,12 @@ void handle_SC_Exec() {
     return move_program_counter();
 }
 
+void handle_SC_Sleep() {
+    int secs = kernel->machine->ReadRegister(4); //This extracts the time in seconds passed as argument by the user
+    SysSleep(secs);
+    //ASSERTNOTREACHED();
+}
+    
 /**
  * @brief handle System Call Join
  * @param id: thread id (get from R4)
@@ -434,6 +440,8 @@ void ExceptionHandler(ExceptionType which) {
                     return handle_SC_Halt();
 		case SC_Abs:
 		    return handle_SC_Abs();
+		case SC_Sleep:
+		    return handle_SC_Sleep();
                 case SC_Add:
                     return handle_SC_Add();
                 case SC_ReadNum:

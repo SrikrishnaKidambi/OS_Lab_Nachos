@@ -112,7 +112,7 @@ ifeq ($(hosttype),unknown)
 PROGRAMS = unknownhost
 else
 # change this if you create a new test program!
-PROGRAMS = prioritySchedulerTest priority1 priority2 priority3 child abs add halt shell matmult sort segments test_syscall num_io char_io random str_io ascii bubblesort help create_file open_file readwrite exec test_sem sinhvien voinuoc main
+PROGRAMS = sleepTest prioritySchedulerTest priority1 priority2 priority3 child abs add halt shell matmult sort segments test_syscall num_io char_io random str_io ascii bubblesort help create_file open_file readwrite exec test_sem sinhvien voinuoc main
 endif
 
 all: $(PROGRAMS)
@@ -132,6 +132,14 @@ prioritySchedulerTest.o: prioritySchedulerTest.c
 prioritySchedulerTest: prioritySchedulerTest.o start.o
 	$(LD) $(LDFLAGS) start.o prioritySchedulerTest.o -o prioritySchedulerTest.coff
 	$(COFF2NOFF) prioritySchedulerTest.coff prioritySchedulerTest
+
+sleepTest.o: sleepTest.c
+	$(CC) $(CFLAGS) -c sleepTest.c
+
+sleepTest: sleepTest.o start.o
+	$(LD) $(LDFLAGS) start.o sleepTest.o -o sleepTest.coff
+	$(COFF2NOFF) sleepTest.coff sleepTest
+
 priority1.o: priority1.c
 	$(CC) $(CFLAGS) -c priority1.c
 priority1: priority1.o start.o

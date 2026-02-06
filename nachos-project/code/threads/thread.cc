@@ -157,7 +157,7 @@ void Thread::Begin() {
     kernel->interrupt->Enable();
 }
 
-//----------------------------------------------------------------------
+//---------------------------------------------------------------------
 // Thread::Finish
 // 	Called by ThreadRoot when a thread is done executing the
 //	forked procedure.
@@ -253,6 +253,35 @@ void Thread::Sleep(bool finishing) {
     kernel->scheduler->Run(nextThread, finishing);
 }
 
+//--------------------------------------------------------------------
+// Implementation of Thread::Sleep2 function my sleep implementation
+//--------------------------------------------------------------------
+
+void Thread::Sleep2(int time) {
+     IntStatus oldstatus = kernel->interrupt->SetLevel(IntOff);
+     Thread *nextThread;
+     
+     ASSERT(this == kernel->currentThread);
+     ASSERT(kernel->interrupt->getLevel() == IntOff);
+
+     DEBUG(dbgThread, "Sleeping thread: " << name);
+     status = BLOCKED;
+     //kernel->scheduler->blockedList->Append(this);
+     int fromNow = time * 1000000; // 1 second = 10^6 ticks
+
+     ASSERT(kernel->stats->totalTicks + fromNow < INT_MAX);
+     //scheduling an interrupt at the time the process sleep will be over
+     this->wakeUpTime=kernel->stats->totalTicks + fromNow;
+     kernel->alarm->sleepList->Insert(this);
+     kernel->interrupt->Schedule(kernel->alarm,fromNow,TimerInt);
+     while((nextThread = kernel->scheduler->FindNextToRun()) ==NULL){
+	     //if(!kernel->IsEmpty())continue;
+	     kernel->interrupt->Idle();
+     }
+
+     kernel->scheduler->Run(nextThread, FALSE);
+     kernel->interrupt->SetLevel(oldstatus);
+}
 //----------------------------------------------------------------------
 // ThreadBegin, ThreadFinish,  ThreadPrint
 //	Dummy functions because C++ does not (easily) allow pointers to member

@@ -9,7 +9,10 @@ int main(){
 	
 	//int p1 = Exec("../test/abs",8);
 	//int p2 = Exec("../test/add",10);
-
+	int i;
+	for(i=0;i<10;i++){
+		PrintString("Parent\n");
+	}
 	Join(p1);
 	Join(p2);
 	Join(p3);
