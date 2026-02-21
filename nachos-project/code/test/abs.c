@@ -2,9 +2,9 @@
 
 int main() {
     unsigned int result;
-
-    result = Abs(-8);
-    PrintString("The absolute value is: ");
+    int number = ReadNum();
+    result = Abs(number);
+    PrintString("The absolute value of addition is: ");
     PrintNum(result);
     PrintString("\n");
     //Halt();

@@ -35,7 +35,7 @@ const int STACK_FENCEPOST = 0xdedbeef;
 //	"threadName" is an arbitrary string, useful for debugging.
 //----------------------------------------------------------------------
 
-Thread::Thread(char *threadName, int pri, bool _has_dynamic_name /*=false*/) {
+Thread::Thread(char *threadName, int pri,char* position,char* fname,bool _has_dynamic_name /*=false*/) {
 
   //  srand(time(0));
     //int random_number = std::rand() % 10 + 1;
@@ -44,6 +44,14 @@ Thread::Thread(char *threadName, int pri, bool _has_dynamic_name /*=false*/) {
     name = threadName;
     //priority = random_number;
     priority = pri; //assigns the user defined priority
+    this->fname=fname;
+    this->position=position; 
+    if(strcmp(this->position,"Left")==0){
+	    this->writefd = OpenForWrite(this->fname);
+    }
+    else if(strcmp(this->position,"Right")==0){
+	    this->readfd = OpenForRead(this->fname,TRUE);
+    }
     //cout<<priority<<endl;
     stackTop = NULL;
     stack = NULL;
@@ -72,6 +80,14 @@ Thread::~Thread() {
     DEBUG(dbgThread, "Deleting thread: " << name);
 
     ASSERT(this != kernel->currentThread);
+    if(writefd!=-1){
+	    Close(writefd);
+	    writefd=-1;
+    }
+    if(readfd!=-1){
+	    Close(readfd);
+	    readfd=-1;
+    }
     if (stack != NULL)
         DeallocBoundedArray((char *)stack, StackSize * sizeof(int));
     if (has_dynamic_name) delete[] name;

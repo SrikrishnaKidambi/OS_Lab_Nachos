@@ -25,6 +25,7 @@
 #include "main.h"
 #include "syscall.h"
 #include "ksyscall.h"
+#include "sysdep.h"
 //----------------------------------------------------------------------
 // ExceptionHandler
 // 	Entry point into the Nachos kernel.  Called when a user program
@@ -232,7 +233,6 @@ void handle_SC_CreateFile() {
     delete[] fileName;
     return move_program_counter();
 }
-
 void handle_SC_Open() {
     int virtAddr = kernel->machine->ReadRegister(4);
     char* fileName = stringUser2System(virtAddr);
@@ -306,11 +306,17 @@ void handle_SC_Seek() {
  * (write result to R2)
  */
 void handle_SC_Exec() {
+    //cout<<"Enter handle SC exec"<<endl;
+    //if priority passed through Exec is -1 then it means random priority b/w 0 to 99 inclusive is assigned
     int virtAddr;
     virtAddr = kernel->machine->ReadRegister(
         4);  // doc dia chi ten chuong trinh tu thanh ghi r4
     char* name;
     int priority = kernel->machine->ReadRegister(5);
+    if(priority==-1){
+	    srand(time(NULL));
+	    priority=rand() % 100;
+    }
     name = stringUser2System(virtAddr);  // Lay ten chuong trinh, nap vao kernel
     if (name == NULL) {
         DEBUG(dbgSys, "\n Not enough memory in System");
@@ -318,8 +324,61 @@ void handle_SC_Exec() {
         kernel->machine->WriteRegister(2, -1);
         return move_program_counter();
     }
-
+    if (priority==NULL){
+	DEBUG(dbgSys, "\n Priority not given for the process to launch");
+	ASSERT(false);
+	kernel->machine->WriteRegister(2,-1);
+	return move_program_counter();
+    }
     kernel->machine->WriteRegister(2, SysExec(name,priority));
+    // DO NOT DELETE NAME, THE THEARD WILL DELETE IT LATER
+    // delete[] name;
+
+    return move_program_counter();
+}
+
+void handle_SC_ExecPV() {
+    //if priority passed through Exec is -1 then it means random priority b/w 0 to 99 inclusive is assigned
+    int virtAddr,virtAddr1,virtAddr2;
+    virtAddr = kernel->machine->ReadRegister(4);  // doc dia chi ten chuong trinh tu thanh ghi r4
+    char* name;
+    int priority = kernel->machine->ReadRegister(5);
+    if(priority==-1){
+            srand(time(NULL));
+            priority=rand() % 100;
+    }
+    char* position;
+    virtAddr1 = kernel->machine->ReadRegister(6);
+    char* fname;
+    virtAddr2 = kernel->machine->ReadRegister(7);
+    name = stringUser2System(virtAddr);  // Lay ten chuong trinh, nap vao kernel
+    position = stringUser2System(virtAddr1);
+    fname = stringUser2System(virtAddr2);
+    if (name == NULL) {
+        DEBUG(dbgSys, "\n Not enough memory in System");
+        ASSERT(false);
+        kernel->machine->WriteRegister(2, -1);
+        return move_program_counter();
+    }
+    if (priority==NULL){
+        DEBUG(dbgSys, "\n Priority not given for the process to launch");
+        ASSERT(false);
+        kernel->machine->WriteRegister(2,-1);
+        return move_program_counter();
+    }
+    if (position==NULL){
+	DEBUG(dbgSys, "\n Position of the executable in the pipe command not specified");
+	ASSERT(false);
+	kernel->machine->WriteRegister(2,-1);
+	return move_program_counter();
+    }
+    if (fname==NULL){
+	DEBUG(dbgSys, "\n The file name to read from or to write to is not specified");
+	ASSERT(false);
+	kernel->machine->WriteRegister(2,-1);
+	return move_program_counter();
+    }
+    kernel->machine->WriteRegister(2, SysExecPV(name,priority,position,fname));
     // DO NOT DELETE NAME, THE THEARD WILL DELETE IT LATER
     // delete[] name;
 
@@ -473,6 +532,8 @@ void ExceptionHandler(ExceptionType which) {
                     return handle_SC_Seek();
                 case SC_Exec:
                     return handle_SC_Exec();
+		case SC_ExecPV:
+		    return handle_SC_ExecPV();
                 case SC_Join:
                     return handle_SC_Join();
                 case SC_Exit:

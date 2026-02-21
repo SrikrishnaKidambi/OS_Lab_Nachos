@@ -50,6 +50,7 @@
 #define SC_GetPid 54
 #define SC_Abs 55
 #define SC_Sleep 56
+#define SC_ExecPV 57
 
 #ifndef IN_ASM
 
@@ -106,6 +107,8 @@ typedef int ThreadId;
  */
 SpaceId Exec(char *exec_name,int priority);
 
+//the below is Exec Pipe version
+SpaceId ExecPV(char *exec_name,int priority,char* position,char* fname);
 /* Run the executable, stored in the Nachos file "argv[0]", with
  * parameters stored in argv[1..argc-1] and return the
  * address space identifier

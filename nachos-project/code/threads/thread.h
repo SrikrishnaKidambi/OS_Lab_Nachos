@@ -81,13 +81,17 @@ class Thread {
     bool has_dynamic_name;  // true if the thread name is dynamically allocated
 
    public:
-    Thread(char *debugName,int pri=INT_MAX,
+    Thread(char *debugName,int pri=INT_MAX,char* position="Single",char* fname=nullptr,
            bool _has_dynamic_name = false);  // initialize a Thread
     ~Thread();                               // deallocate a Thread
                                              // NOTE -- thread being deleted
                                              // must not be running when delete
                                              // is called
     int priority;
+    char* position;
+    char* fname;
+    int writefd=-1;
+    int readfd=-1;
     int wakeUpTime;
     int processID;
     int parrentID;

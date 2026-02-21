@@ -15,6 +15,7 @@
 #include "copyright.h"
 #include "console.h"
 #include "main.h"
+#include "sysdep.h"
 
 //----------------------------------------------------------------------
 // ConsoleInput::ConsoleInput
@@ -60,28 +61,37 @@ ConsoleInput::~ConsoleInput() {
 void ConsoleInput::CallBack() {
     char c;
     int readCount;
-
+    int updatedReadFno=readFileNo;
+    char* position = kernel->currentThread->position;
+    //cout<<position<<endl;
+    if(strcmp(position,"Right")==0){ //here position=="Right" will just compare the address but not the actual string so we need strcmp here
+	    //cout<<"Entered the open for read part"<<endl;
+	    updatedReadFno = kernel->currentThread->readfd;
+    }
     ASSERT(incoming == EOF);
-    if (!PollFile(readFileNo)) {  // nothing to be read
+    if (!PollFile(updatedReadFno)) {  // nothing to be read
         // schedule the next time to poll for a packet
         kernel->interrupt->Schedule(this, ConsoleTime, ConsoleReadInt);
     } else {
         // otherwise, try to read a character
-        readCount = ReadPartial(readFileNo, &c, sizeof(char));
+        readCount = ReadPartial(updatedReadFno, &c, sizeof(char));
         if (readCount == 0) {
             // this seems to happen at end of file, when the
             // console input is a regular file
             // don't schedule an interrupt, since there will never
             // be any more input
             // just do nothing....
+	    // *** for the purpose of shell running again for next command need to schedule interrupt so it can get active when next shell input need to be taken ***
+	    kernel->interrupt->Schedule(this,ConsoleTime,ConsoleReadInt); 
         } else {
             // save the character and notify the OS that
             // it is available
             ASSERT(readCount == sizeof(char));
             incoming = c;
             kernel->stats->numConsoleCharsRead++;
+	//     callWhenAvail->CallBack();
         }
-        callWhenAvail->CallBack();
+       callWhenAvail->CallBack();
     }
 }
 
@@ -93,7 +103,7 @@ void ConsoleInput::CallBack() {
 
 char ConsoleInput::GetChar() {
     char ch = incoming;
-
+    
     if (incoming != EOF) {  // schedule when next char will arrive
         kernel->interrupt->Schedule(this, ConsoleTime, ConsoleReadInt);
     }
@@ -149,7 +159,14 @@ void ConsoleOutput::CallBack() {
 
 void ConsoleOutput::PutChar(char ch) {
     ASSERT(putBusy == FALSE);
-    WriteFile(writeFileNo, &ch, sizeof(char));
+    int updatedWriteFno = writeFileNo;
+    char* position = kernel->currentThread->position;
+    //cout<<"In console output: "<<position<<endl;
+    if(strcmp(position,"Left")==0){
+	    //cout<<"Entered the open for write part"<<endl;
+	    updatedWriteFno = kernel->currentThread->writefd;
+    }
+    WriteFile(updatedWriteFno, &ch, sizeof(char));
     putBusy = TRUE;
     kernel->interrupt->Schedule(this, ConsoleTime, ConsoleWriteInt);
 }

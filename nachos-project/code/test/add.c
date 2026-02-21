@@ -11,9 +11,9 @@ int main() {
     int result;
 
     result = Add(42, 23);
-    PrintString("The addition result is: ");
+    //PrintString("The addition result is: ");
     PrintNum(result);
-    PrintString("\n");
+    //PrintString("\n");
     //Halt();
     /* not reached */
 }

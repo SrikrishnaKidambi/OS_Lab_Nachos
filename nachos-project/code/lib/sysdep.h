@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <climits>
+#include <cstring>
 using namespace std;
 
 // Process control: abort, exit, and sleep

@@ -209,6 +209,15 @@ int SysExec(char* name,int priority) {
     // Return child process id
     return kernel->pTab->ExecUpdate(name,priority);
 }
+int SysExecPV(char* name,int priority,char* position,char* fname){
+	OpenFile* oFile = kernel->fileSystem->Open(name);
+	if (oFile==NULL){
+		DEBUG(dbgSys,"\nExec:: Can't open this file.");
+		return -1;
+	}
+	delete oFile;
+	return kernel->pTab->ExecUpdate(name,priority,position,fname);
+}
 void SysSleep(int secs) { kernel->currentThread->Sleep2(secs); }
 
 int SysJoin(int id) { return kernel->pTab->JoinUpdate(id); }

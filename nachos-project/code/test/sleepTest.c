@@ -4,6 +4,7 @@
 
 int main(){
 	int p1 = Exec("../test/priority1",12);
+	int p2 = Exec("../test/priority2",15);
 	int i;
 
 	for(i=0;i<10;i++){
@@ -15,6 +16,6 @@ int main(){
 		PrintString("Parent after sleep\n");
 	}
 	Join(p1);
-
+	Join(p2);
 	Halt();
 }
