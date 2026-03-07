@@ -35,6 +35,7 @@ void StartProcess_2(void* pid) {
         printf("\nPCB::Exec: Can't create AddSpace.");
         return;
     }
+    //copy the parent fdtable to the child
 
     space->Execute();
     // kernel->currentThread->space = space;
@@ -48,19 +49,33 @@ void StartProcess_2(void* pid) {
                     // by doing the syscall "exit"
 }
 
-int PCB::Exec(char* filename, int id,int priority,char* position,char* fname) {
+int PCB::Exec(char* filename, int id,int priority,char* position,char* fname,int piperd) {
     // cerr << filename << ' ' << pid << endl;
     multex->P();
-
+    Thread* parent = kernel->currentThread;
     this->thread = new Thread(filename, priority,position,fname,true);
+
     if (this->thread == NULL) {
         printf("\nPCB::Exec: Not enough memory!\n");
         multex->V();  // Nha CPU de nhuong CPU cho tien trinh khac
         return -1;    // Tra ve -1 neu that bai
     }
 
+    //assign the piperd here
+    this->thread->piperd = piperd;
+
+    //copy the fdtable from the parent here
+   /* int i;
+    for(i = 0;i<MAX_FD;i++){
+	    this->thread->fdTable.table[i]=parent->fdTable.table[i];
+    }*/
+    this->thread->fdTable = parent->fdTable;
+
     //  Đặt processID của thread này là id.
     this->thread->processID = id;
+
+    // Copy the fd table of parent process to the child process
+   // this->thread->space->fdTable = parent->space->fdTable;
     // Đặt parrentID của thread này là processID của thread gọi thực thi Exec
     this->parentID = kernel->currentThread->processID;
     // Gọi thực thi Fork(StartProcess_2,id) => Ta cast thread thành kiểu int,

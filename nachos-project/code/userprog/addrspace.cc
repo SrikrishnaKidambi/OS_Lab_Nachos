@@ -64,6 +64,7 @@ static void SwapHeader(NoffHeader *noffH) {
 //----------------------------------------------------------------------
 
 AddrSpace::AddrSpace() {
+    
     // pageTable = new TranslationEntry[NumPhysPages];
     // for (int i = 0; i < NumPhysPages; i++) {
     //     pageTable[i].virtualPage = i;  // for now, virt page # = phys page #
@@ -102,6 +103,7 @@ AddrSpace::~AddrSpace() {
 //----------------------------------------------------------------------
 
 AddrSpace::AddrSpace(char *fileName) {
+    
     OpenFile *executable = kernel->fileSystem->Open(fileName);
     NoffHeader noffH;
     unsigned int i, size, j, offset;

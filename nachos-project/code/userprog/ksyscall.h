@@ -15,7 +15,8 @@
 #include "synchconsole.h"
 #include "ksyscallhelper.h"
 #include <stdlib.h>
-
+#include <string.h>
+#include "fileDescriptor.h"
 
 #define INT32_MIN 0
 
@@ -218,6 +219,43 @@ int SysExecPV(char* name,int priority,char* position,char* fname){
 	delete oFile;
 	return kernel->pTab->ExecUpdate(name,priority,position,fname);
 }
+
+int SysExecChild(char* name,int priority,char* position,int rd){
+	OpenFile* oFile = kernel->fileSystem->Open(name);
+	if (oFile==NULL){
+		DEBUG(dbgSys,"\nExec:: Can't open this file.");
+		return -1;
+	}
+	delete oFile;
+	return kernel->pTab->ExecUpdate(name,priority,position,nullptr,rd);
+}
+
+int SysGetChildRd(){
+	if(strcmp(kernel->currentThread->position,"Child")==0){
+		return kernel->currentThread->piperd;
+	}
+	return -1;
+}
+
+int SysPipe(int* rd,int* wd){
+	
+	FDTable* fdt = &kernel->currentThread->fdTable;
+	return fdtable_pipe(fdt,rd,wd);
+}
+int SysWriteFFd(int fd,char* userBuf,int n){
+	FDTable* fdt = &kernel->currentThread->fdTable;
+	return fdtable_write(fdt,fd,userBuf,n);
+}
+int SysReadFFd(int fd,char* userBuf,int n){
+	FDTable* fdt = &kernel->currentThread->fdTable;
+	return fdtable_read(fdt,fd,userBuf,n);
+}
+
+void SysCloseFd(int fd){
+	FDTable* fdt = &kernel->currentThread->fdTable;
+	fdtable_close(fdt,fd);
+}
+
 void SysSleep(int secs) { kernel->currentThread->Sleep2(secs); }
 
 int SysJoin(int id) { return kernel->pTab->JoinUpdate(id); }

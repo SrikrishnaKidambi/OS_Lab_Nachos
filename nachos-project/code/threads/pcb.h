@@ -1,6 +1,6 @@
 #ifndef PCB_H
 #define PCB_H
-
+#include "fileDescriptor.h"
 class PCB {
    private:
     Semaphore *joinsem;
@@ -20,7 +20,7 @@ class PCB {
     PCB(int id);
     ~PCB();
 
-    int Exec(char *filename, int pid,int priority,char* position="Single",char* fname=nullptr);
+    int Exec(char *filename, int pid,int priority,char* position="Single",char* fname=nullptr,int piperd =-1);
     int GetID();
     int GetNumWait();
 

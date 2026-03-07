@@ -81,8 +81,7 @@ class Thread {
     bool has_dynamic_name;  // true if the thread name is dynamically allocated
 
    public:
-    Thread(char *debugName,int pri=INT_MAX,char* position="Single",char* fname=nullptr,
-           bool _has_dynamic_name = false);  // initialize a Thread
+    Thread(char *debugName,int pri=INT_MAX,char* position="Single",char* fname=nullptr, bool _has_dynamic_name = false);  // initialize a Thread
     ~Thread();                               // deallocate a Thread
                                              // NOTE -- thread being deleted
                                              // must not be running when delete
@@ -92,7 +91,9 @@ class Thread {
     char* fname;
     int writefd=-1;
     int readfd=-1;
+    int piperd=-1;
     int wakeUpTime;
+    FDTable fdTable; // it contains the file descriptor table for this process
     int processID;
     int parrentID;
     int exitStatus;

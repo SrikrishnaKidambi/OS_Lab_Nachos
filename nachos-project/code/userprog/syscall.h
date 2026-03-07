@@ -51,6 +51,14 @@
 #define SC_Abs 55
 #define SC_Sleep 56
 #define SC_ExecPV 57
+//for pipe implementation below system calls are introducted
+#define SC_Pipe 58
+#define SC_ReadFFd 59
+#define SC_WriteFFd 60
+#define SC_CloseFd 61
+#define SC_ExecChild 62
+#define SC_GetChildRd 63
+//------------
 
 #ifndef IN_ASM
 
@@ -120,6 +128,17 @@ SpaceId ExecV(int argc, char *argv[]);
  */
 int Join(SpaceId id);
 
+int Pipe(int *,int *);
+
+int ReadFFd(int fd,char* userbuf,int n);
+
+int WriteFFd(int fd,char* userbuf,int n);
+
+void CloseFd(int fd);
+
+SpaceId ExecChild(char *exec_name,int priority,char* position,int rd);
+
+int GetChildRd();
 /* File system operations: Create, Remove, Open, Read, Write, Close
  * These functions are patterned after UNIX -- files represent
  * both files *and* hardware I/O devices.

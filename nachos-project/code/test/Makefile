@@ -112,7 +112,7 @@ ifeq ($(hosttype),unknown)
 PROGRAMS = unknownhost
 else
 # change this if you create a new test program!
-PROGRAMS = printReader printWriter sleepTest prioritySchedulerTest priority1 priority2 priority3 child abs add halt shell matmult sort segments test_syscall num_io char_io random str_io ascii bubblesort help create_file open_file readwrite exec test_sem sinhvien voinuoc main
+PROGRAMS = pipeAdd pipeAbs pipeTestChild pipeTest printReader printWriter sleepTest prioritySchedulerTest priority1 priority2 priority3 child abs add halt shell matmult sort segments test_syscall num_io char_io random str_io ascii bubblesort help create_file open_file readwrite exec test_sem sinhvien voinuoc main
 endif
 
 all: $(PROGRAMS)
@@ -169,6 +169,30 @@ printReader.o: printReader.c
 printReader: printReader.o start.o
 	$(LD) $(LDFLAGS) start.o printReader.o -o printReader.coff
 	$(COFF2NOFF) printReader.coff printReader
+
+pipeTest.o: pipeTest.c
+	$(CC) $(CFLAGS) -c pipeTest.c
+pipeTest: pipeTest.o start.o
+	$(LD) $(LDFLAGS) start.o pipeTest.o -o pipeTest.coff
+	$(COFF2NOFF) pipeTest.coff pipeTest
+
+pipeTestChild.o: pipeTestChild.c
+	$(CC) $(CFLAGS) -c pipeTestChild.c
+pipeTestChild: pipeTestChild.o start.o
+	$(LD) $(LDFLAGS) start.o pipeTestChild.o -o pipeTestChild.coff
+	$(COFF2NOFF) pipeTestChild.coff pipeTestChild
+
+pipeAdd.o: pipeAdd.c
+	$(CC) $(CFLAGS) -c pipeAdd.c
+pipeAdd: pipeAdd.o start.o
+	$(LD) $(LDFLAGS) start.o pipeAdd.o -o pipeAdd.coff
+	$(COFF2NOFF) pipeAdd.coff pipeAdd
+
+pipeAbs.o: pipeAbs.c
+	$(CC) $(CFLAGS) -c pipeAbs.c
+pipeAbs: pipeAbs.o start.o
+	$(LD) $(LDFLAGS) start.o pipeAbs.o -o pipeAbs.coff
+	$(COFF2NOFF) pipeAbs.coff pipeAbs
 
 add.o: add.c
 	$(CC) $(CFLAGS) -c add.c

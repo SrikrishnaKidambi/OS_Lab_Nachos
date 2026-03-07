@@ -15,6 +15,7 @@
 
 #include "copyright.h"
 #include "filesys.h"
+#include "fileDescriptor.h"
 
 #define UserStackSize 1024  // increase this as necessary!
 
@@ -35,6 +36,7 @@ class AddrSpace {
     // Translate virtual address _vaddr_
     // to physical address _paddr_. _mode_
     // is 0 for Read, 1 for Write.
+    
     ExceptionType Translate(unsigned int vaddr, unsigned int *paddr, int mode);
     // void InitRegisters();
    private:

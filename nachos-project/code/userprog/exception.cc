@@ -385,13 +385,98 @@ void handle_SC_ExecPV() {
     return move_program_counter();
 }
 
+void handle_SC_ExecChild() {
+
+    int virtAddr = kernel->machine->ReadRegister(4);
+    int priority = kernel->machine->ReadRegister(5);
+    int virtAddr1 = kernel->machine->ReadRegister(6);
+    int rd = kernel->machine->ReadRegister(7);
+
+    char* name;
+    char* position;
+
+    if(priority == -1){
+        srand(time(NULL));
+        priority = rand() % 100;
+    }
+
+    name = stringUser2System(virtAddr);
+    position = stringUser2System(virtAddr1);
+
+    if(name == NULL){
+        DEBUG(dbgSys, "\nNot enough memory");
+        kernel->machine->WriteRegister(2,-1);
+        return move_program_counter();
+    }
+
+    if(position == NULL){
+        DEBUG(dbgSys,"\nPosition not specified");
+        kernel->machine->WriteRegister(2,-1);
+        return move_program_counter();
+    }
+
+    // rd is already integer, no conversion needed
+
+
+    kernel->machine->WriteRegister(2,SysExecChild(name, priority, position, rd));
+
+    return move_program_counter();
+}
+
+void handle_SC_GetChildRd(){
+    int res = SysGetChildRd();
+    kernel->machine->WriteRegister(2,res);
+    return move_program_counter();
+}
+
 void handle_SC_Sleep() {
     int secs = kernel->machine->ReadRegister(4); //This extracts the time in seconds passed as argument by the user
     SysSleep(secs);
     //ASSERTNOTREACHED();
     return move_program_counter();
 }
-    
+
+void handle_SC_Pipe() {
+   int rd = kernel->machine->ReadRegister(4);
+   int wd = kernel->machine->ReadRegister(5);
+   int rdbuf,wdbuf;
+   int res = SysPipe(&rdbuf,&wdbuf); 
+   StringSys2User((char *)&rdbuf,rd,4);
+   StringSys2User((char *)&wdbuf,wd,4);
+   kernel->machine->WriteRegister(2,res);//update later
+   return move_program_counter();
+}
+
+void handle_SC_WriteFFd() {
+   int fd = kernel->machine->ReadRegister(4);
+   int userbuf = kernel->machine->ReadRegister(5);
+   int size = kernel->machine->ReadRegister(6);
+
+   char* buffer= stringUser2System(userbuf,size);
+   int res = SysWriteFFd(fd,buffer,size);
+   kernel->machine->WriteRegister(2,res);
+   return move_program_counter();
+}
+
+void handle_SC_ReadFFd() {
+   int fd = kernel->machine->ReadRegister(4);
+   int userbuf = kernel->machine->ReadRegister(5);
+   int size = kernel->machine->ReadRegister(6);
+
+   char* buffer= new char[size];
+   int res = SysReadFFd(fd,buffer,size);
+   StringSys2User((char *)buffer,userbuf,size);
+   kernel->machine->WriteRegister(2,res);
+   return move_program_counter();
+}
+
+void handle_SC_CloseFd(){
+   int fd = kernel->machine->ReadRegister(4);
+   SysCloseFd(fd);
+   kernel->machine->WriteRegister(2,0);
+   return move_program_counter();
+}
+
 /**
  * @brief handle System Call Join
  * @param id: thread id (get from R4)
@@ -504,6 +589,18 @@ void ExceptionHandler(ExceptionType which) {
 		    return handle_SC_Sleep();
                 case SC_Add:
                     return handle_SC_Add();
+		case SC_Pipe:
+		    return handle_SC_Pipe();
+		case SC_ReadFFd:
+		    return handle_SC_ReadFFd();
+		case SC_WriteFFd:
+		    return handle_SC_WriteFFd();
+		case SC_CloseFd:
+		    return handle_SC_CloseFd();
+		case SC_ExecChild:
+		    return handle_SC_ExecChild();
+		case SC_GetChildRd:
+		    return handle_SC_GetChildRd();
                 case SC_ReadNum:
                     return handle_SC_ReadNum();
                 case SC_PrintNum:

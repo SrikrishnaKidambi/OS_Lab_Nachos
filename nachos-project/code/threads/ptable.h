@@ -16,7 +16,7 @@ class PTable {
    public:
     PTable(int size);
     ~PTable();
-    int ExecUpdate(char* name,int priority,char* position="Single",char* fname=nullptr);
+    int ExecUpdate(char* name,int priority,char* position="Single",char* fname=nullptr,int piperd=-1);
     int ExitUpdate(int ec);
     int JoinUpdate(int id);
     int GetFreeSlot();

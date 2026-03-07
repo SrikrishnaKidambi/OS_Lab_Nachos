@@ -45,7 +45,9 @@ Thread::Thread(char *threadName, int pri,char* position,char* fname,bool _has_dy
     //priority = random_number;
     priority = pri; //assigns the user defined priority
     this->fname=fname;
-    this->position=position; 
+    this->position=position;
+   // this->piperd = piperd;
+    fdtable_init(&fdTable);
     if(strcmp(this->position,"Left")==0){
 	    this->writefd = OpenForWrite(this->fname);
     }
@@ -87,6 +89,10 @@ Thread::~Thread() {
     if(readfd!=-1){
 	    Close(readfd);
 	    readfd=-1;
+    }
+    int j;
+    for (j = 0; j < MAX_FD; j++) {
+            fdtable_close(&fdTable,j);
     }
     if (stack != NULL)
         DeallocBoundedArray((char *)stack, StackSize * sizeof(int));
