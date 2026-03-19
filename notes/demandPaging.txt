@@ -1,0 +1,19 @@
+Demand Paging:
+
+- Implement demand paging
+- On demand paging
+- When process load just load the pages it need
+- Page fault -> Page load
+- Process layout find out (heap in data segment)
+- Check exception.cc to find out page fault exception
+- No heap concept in nachos , no concept of heap
+- The test code must have atleast 2 pages
+
+Flow:
+
+- Exec in pcb.cc
+- Fork in thread.cc calls Start_Process_2 func
+- Call the AddressSpace
+- Go inside the constructor of AddressSpace
+- See pagefault in machine/translate.cc
+-  
