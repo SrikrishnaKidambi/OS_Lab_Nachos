@@ -7,7 +7,7 @@ int main() {
     PrintString("The absolute value of addition is: ");
     PrintNum(result);
     PrintString("\n");
-    //Halt();
+    Halt();
     /* not reached */
 }
 

@@ -11,7 +11,7 @@ int main(){
 		PrintString("Parent before sleep\n");
 	}
 	PrintString("Parent Slept\n");
-	Sleep(4);
+	Sleep(4); // The unit considered is seconds, 1 second = 10^6 ticks as per nachos documentation
 	for(i=0;i<10;i++){
 		PrintString("Parent after sleep\n");
 	}
