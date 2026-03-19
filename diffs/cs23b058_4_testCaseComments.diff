@@ -1,0 +1,39 @@
+diff --git a/nachos-project/code/test/abs.c b/nachos-project/code/test/abs.c
+index bfc90a6..f397588 100755
+--- a/nachos-project/code/test/abs.c
++++ b/nachos-project/code/test/abs.c
+@@ -7,7 +7,7 @@ int main() {
+     PrintString("The absolute value of addition is: ");
+     PrintNum(result);
+     PrintString("\n");
+-    //Halt();
++    Halt();
+     /* not reached */
+ }
+ 
+diff --git a/nachos-project/code/test/priority2.c b/nachos-project/code/test/priority2.c
+index d1b91fb..3305502 100644
+--- a/nachos-project/code/test/priority2.c
++++ b/nachos-project/code/test/priority2.c
+@@ -6,7 +6,7 @@ int main(){
+         int i,j;
+         for(j=0;j<10;j++){
+         	for(i=0;i<10000;i++);
+-		if(j==5)Sleep(4);
++		if(j==5)Sleep(4); // you can remove this sleep to test priority scheduler properly and to test sleep keep it back
+         	PrintString("prgrm 2\n");
+ 	}
+         return 0;
+diff --git a/nachos-project/code/test/sleepTest.c b/nachos-project/code/test/sleepTest.c
+index 65ff429..45b0643 100644
+--- a/nachos-project/code/test/sleepTest.c
++++ b/nachos-project/code/test/sleepTest.c
+@@ -11,7 +11,7 @@ int main(){
+ 		PrintString("Parent before sleep\n");
+ 	}
+ 	PrintString("Parent Slept\n");
+-	Sleep(4);
++	Sleep(4); // The unit considered is seconds, 1 second = 10^6 ticks as per nachos documentation
+ 	for(i=0;i<10;i++){
+ 		PrintString("Parent after sleep\n");
+ 	}
