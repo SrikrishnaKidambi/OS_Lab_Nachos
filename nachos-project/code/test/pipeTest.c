@@ -8,10 +8,10 @@ int main(){
 	int child;
 
 	result=Pipe(&rd,&wd);
-	PrintNum(rd);
-	PrintString("\n");
-	PrintNum(wd);
-	PrintString("\n");	
+//	PrintNum(rd);
+//	PrintString("\n");
+//	PrintNum(wd);
+//	PrintString("\n");	
         userbuf	= "hello world";
         res1 = WriteFFd(wd,userbuf,11);
 	if(res1==-1){
