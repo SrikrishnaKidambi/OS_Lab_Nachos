@@ -1,0 +1,755 @@
+diff --git a/nachos-project/code/build.linux/Makefile.dep b/nachos-project/code/build.linux/Makefile.dep
+index 2341841..3faf3df 100755
+--- a/nachos-project/code/build.linux/Makefile.dep
++++ b/nachos-project/code/build.linux/Makefile.dep
+@@ -873,10 +873,11 @@ interrupt.o: ../machine/interrupt.cc /usr/include/stdc-predef.h \
+  ../lib/list.cc ../machine/callback.h ../threads/main.h \
+  ../threads/kernel.h ../threads/thread.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../threads/fileDescriptor.h \
+- ../threads/scheduler.h ../machine/stats.h ../threads/alarm.h \
+- ../machine/timer.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
+- ../threads/ptable.h ../threads/pcb.h
++ ../filesys/openfile.h ../filesys/filetable.h ../userprog/noff.h \
++ ../threads/fileDescriptor.h ../threads/scheduler.h ../machine/stats.h \
++ ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
++ ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
++ ../threads/pcb.h
+ stats.o: ../machine/stats.cc /usr/include/stdc-predef.h \
+  ../lib/copyright.h ../lib/debug.h ../lib/utility.h ../lib/sysdep.h \
+  /usr/include/c++/13/iostream /usr/include/c++/13/bits/requires_hosted.h \
+@@ -1201,11 +1202,11 @@ timer.o: ../machine/timer.cc /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/c++/13/cstring \
+  ../threads/kernel.h ../threads/thread.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../threads/fileDescriptor.h \
+- ../threads/scheduler.h ../lib/list.h ../lib/list.cc \
+- ../machine/interrupt.h ../machine/stats.h ../threads/alarm.h \
+- ../lib/bitmap.h ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+- ../threads/pcb.h
++ ../filesys/openfile.h ../filesys/filetable.h ../userprog/noff.h \
++ ../threads/fileDescriptor.h ../threads/scheduler.h ../lib/list.h \
++ ../lib/list.cc ../machine/interrupt.h ../machine/stats.h \
++ ../threads/alarm.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
++ ../threads/ptable.h ../threads/pcb.h
+ console.o: ../machine/console.cc /usr/include/stdc-predef.h \
+  ../lib/copyright.h ../machine/console.h ../lib/utility.h \
+  ../machine/callback.h ../threads/main.h ../lib/debug.h ../lib/sysdep.h \
+@@ -1369,11 +1370,12 @@ console.o: ../machine/console.cc /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/c++/13/cstring \
+  ../threads/kernel.h ../threads/thread.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../threads/fileDescriptor.h \
+- ../threads/scheduler.h ../lib/list.h ../lib/list.cc \
+- ../machine/interrupt.h ../machine/stats.h ../threads/alarm.h \
+- ../machine/timer.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
+- ../threads/ptable.h ../threads/pcb.h
++ ../filesys/openfile.h ../filesys/filetable.h ../userprog/noff.h \
++ ../threads/fileDescriptor.h ../threads/scheduler.h ../lib/list.h \
++ ../lib/list.cc ../machine/interrupt.h ../machine/stats.h \
++ ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
++ ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
++ ../threads/pcb.h
+ machine.o: ../machine/machine.cc /usr/include/stdc-predef.h \
+  ../lib/copyright.h ../machine/machine.h ../lib/utility.h \
+  ../machine/translate.h ../threads/main.h ../lib/debug.h ../lib/sysdep.h \
+@@ -1537,11 +1539,11 @@ machine.o: ../machine/machine.cc /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/c++/13/cstring \
+  ../threads/kernel.h ../threads/thread.h ../userprog/addrspace.h \
+  ../filesys/filesys.h ../filesys/openfile.h ../filesys/filetable.h \
+- ../threads/fileDescriptor.h ../threads/scheduler.h ../lib/list.h \
+- ../lib/list.cc ../machine/interrupt.h ../machine/callback.h \
+- ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+- ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+- ../threads/pcb.h
++ ../userprog/noff.h ../threads/fileDescriptor.h ../threads/scheduler.h \
++ ../lib/list.h ../lib/list.cc ../machine/interrupt.h \
++ ../machine/callback.h ../machine/stats.h ../threads/alarm.h \
++ ../machine/timer.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
++ ../threads/ptable.h ../threads/pcb.h
+ mipssim.o: ../machine/mipssim.cc /usr/include/stdc-predef.h \
+  ../lib/copyright.h ../lib/debug.h ../lib/utility.h ../lib/sysdep.h \
+  /usr/include/c++/13/iostream /usr/include/c++/13/bits/requires_hosted.h \
+@@ -1705,7 +1707,7 @@ mipssim.o: ../machine/mipssim.cc /usr/include/stdc-predef.h \
+  ../machine/machine.h ../machine/translate.h ../machine/mipssim.h \
+  ../threads/main.h ../threads/kernel.h ../threads/thread.h \
+  ../userprog/addrspace.h ../filesys/filesys.h ../filesys/openfile.h \
+- ../filesys/filetable.h ../threads/fileDescriptor.h \
++ ../filesys/filetable.h ../userprog/noff.h ../threads/fileDescriptor.h \
+  ../threads/scheduler.h ../lib/list.h ../lib/list.cc \
+  ../machine/interrupt.h ../machine/callback.h ../machine/stats.h \
+  ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+@@ -1874,10 +1876,10 @@ translate.o: ../machine/translate.cc /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/c++/13/cstring \
+  ../threads/kernel.h ../threads/thread.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../threads/fileDescriptor.h \
+- ../threads/scheduler.h ../lib/list.h ../lib/list.cc \
+- ../machine/interrupt.h ../machine/callback.h ../machine/stats.h \
+- ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
++ ../filesys/openfile.h ../filesys/filetable.h ../userprog/noff.h \
++ ../threads/fileDescriptor.h ../threads/scheduler.h ../lib/list.h \
++ ../lib/list.cc ../machine/interrupt.h ../machine/callback.h \
++ ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+  ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+  ../threads/pcb.h
+ network.o: ../machine/network.cc /usr/include/stdc-predef.h \
+@@ -2043,11 +2045,12 @@ network.o: ../machine/network.cc /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/c++/13/cstring \
+  ../threads/kernel.h ../threads/thread.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../threads/fileDescriptor.h \
+- ../threads/scheduler.h ../lib/list.h ../lib/list.cc \
+- ../machine/interrupt.h ../machine/stats.h ../threads/alarm.h \
+- ../machine/timer.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
+- ../threads/ptable.h ../threads/pcb.h
++ ../filesys/openfile.h ../filesys/filetable.h ../userprog/noff.h \
++ ../threads/fileDescriptor.h ../threads/scheduler.h ../lib/list.h \
++ ../lib/list.cc ../machine/interrupt.h ../machine/stats.h \
++ ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
++ ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
++ ../threads/pcb.h
+ disk.o: ../machine/disk.cc /usr/include/stdc-predef.h ../lib/copyright.h \
+  ../machine/disk.h ../lib/utility.h ../machine/callback.h ../lib/debug.h \
+  ../lib/sysdep.h /usr/include/c++/13/iostream \
+@@ -2212,8 +2215,8 @@ disk.o: ../machine/disk.cc /usr/include/stdc-predef.h ../lib/copyright.h \
+  ../threads/main.h ../threads/kernel.h ../threads/thread.h \
+  ../machine/machine.h ../machine/translate.h ../userprog/addrspace.h \
+  ../filesys/filesys.h ../filesys/openfile.h ../filesys/filetable.h \
+- ../threads/fileDescriptor.h ../threads/scheduler.h ../lib/list.h \
+- ../lib/list.cc ../machine/interrupt.h ../machine/stats.h \
++ ../userprog/noff.h ../threads/fileDescriptor.h ../threads/scheduler.h \
++ ../lib/list.h ../lib/list.cc ../machine/interrupt.h ../machine/stats.h \
+  ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+  ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+  ../threads/pcb.h
+@@ -2381,10 +2384,10 @@ alarm.o: ../threads/alarm.cc /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/c++/13/cstring \
+  ../machine/machine.h ../machine/translate.h ../userprog/addrspace.h \
+  ../filesys/filesys.h ../filesys/openfile.h ../filesys/filetable.h \
+- ../threads/fileDescriptor.h ../lib/list.h ../lib/debug.h ../lib/list.cc \
+- ../threads/main.h ../threads/kernel.h ../threads/scheduler.h \
+- ../machine/interrupt.h ../machine/stats.h ../lib/bitmap.h \
+- ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
++ ../userprog/noff.h ../threads/fileDescriptor.h ../lib/list.h \
++ ../lib/debug.h ../lib/list.cc ../threads/main.h ../threads/kernel.h \
++ ../threads/scheduler.h ../machine/interrupt.h ../machine/stats.h \
++ ../lib/bitmap.h ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+  ../threads/pcb.h
+ kernel.o: ../threads/kernel.cc /usr/include/stdc-predef.h \
+  ../lib/copyright.h ../lib/debug.h ../lib/utility.h ../lib/sysdep.h \
+@@ -2549,14 +2552,14 @@ kernel.o: ../threads/kernel.cc /usr/include/stdc-predef.h \
+  ../threads/main.h ../threads/kernel.h ../threads/thread.h \
+  ../machine/machine.h ../machine/translate.h ../userprog/addrspace.h \
+  ../filesys/filesys.h ../filesys/openfile.h ../filesys/filetable.h \
+- ../threads/fileDescriptor.h ../threads/scheduler.h ../lib/list.h \
+- ../lib/list.cc ../machine/interrupt.h ../machine/callback.h \
+- ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+- ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+- ../threads/pcb.h ../threads/synch.h ../threads/synchlist.h \
+- ../threads/synchlist.cc ../lib/libtest.h ../userprog/synchconsole.h \
+- ../machine/console.h ../filesys/synchdisk.h ../machine/disk.h \
+- ../network/post.h ../machine/network.h
++ ../userprog/noff.h ../threads/fileDescriptor.h ../threads/scheduler.h \
++ ../lib/list.h ../lib/list.cc ../machine/interrupt.h \
++ ../machine/callback.h ../machine/stats.h ../threads/alarm.h \
++ ../machine/timer.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
++ ../threads/ptable.h ../threads/pcb.h ../threads/synch.h \
++ ../threads/synchlist.h ../threads/synchlist.cc ../lib/libtest.h \
++ ../userprog/synchconsole.h ../machine/console.h ../filesys/synchdisk.h \
++ ../machine/disk.h ../network/post.h ../machine/network.h
+ main.o: ../threads/main.cc /usr/include/stdc-predef.h ../lib/copyright.h \
+  ../threads/main.h ../lib/debug.h ../lib/utility.h ../lib/sysdep.h \
+  /usr/include/c++/13/iostream /usr/include/c++/13/bits/requires_hosted.h \
+@@ -2719,10 +2722,10 @@ main.o: ../threads/main.cc /usr/include/stdc-predef.h ../lib/copyright.h \
+  /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/c++/13/cstring \
+  ../threads/kernel.h ../threads/thread.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../threads/fileDescriptor.h \
+- ../threads/scheduler.h ../lib/list.h ../lib/list.cc \
+- ../machine/interrupt.h ../machine/callback.h ../machine/stats.h \
+- ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
++ ../filesys/openfile.h ../filesys/filetable.h ../userprog/noff.h \
++ ../threads/fileDescriptor.h ../threads/scheduler.h ../lib/list.h \
++ ../lib/list.cc ../machine/interrupt.h ../machine/callback.h \
++ ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+  ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+  ../threads/pcb.h
+ scheduler.o: ../threads/scheduler.cc /usr/include/stdc-predef.h \
+@@ -2888,9 +2891,9 @@ scheduler.o: ../threads/scheduler.cc /usr/include/stdc-predef.h \
+  ../threads/scheduler.h ../lib/list.h ../lib/list.cc ../threads/thread.h \
+  ../machine/machine.h ../machine/translate.h ../userprog/addrspace.h \
+  ../filesys/filesys.h ../filesys/openfile.h ../filesys/filetable.h \
+- ../threads/fileDescriptor.h ../threads/main.h ../threads/kernel.h \
+- ../machine/interrupt.h ../machine/callback.h ../machine/stats.h \
+- ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
++ ../userprog/noff.h ../threads/fileDescriptor.h ../threads/main.h \
++ ../threads/kernel.h ../machine/interrupt.h ../machine/callback.h \
++ ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+  ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+  ../threads/pcb.h
+ synch.o: ../threads/synch.cc /usr/include/stdc-predef.h \
+@@ -3056,10 +3059,10 @@ synch.o: ../threads/synch.cc /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/c++/13/cstring \
+  ../machine/machine.h ../machine/translate.h ../userprog/addrspace.h \
+  ../filesys/filesys.h ../filesys/openfile.h ../filesys/filetable.h \
+- ../threads/fileDescriptor.h ../lib/list.h ../lib/debug.h ../lib/list.cc \
+- ../threads/main.h ../threads/kernel.h ../threads/scheduler.h \
+- ../machine/interrupt.h ../machine/callback.h ../machine/stats.h \
+- ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
++ ../userprog/noff.h ../threads/fileDescriptor.h ../lib/list.h \
++ ../lib/debug.h ../lib/list.cc ../threads/main.h ../threads/kernel.h \
++ ../threads/scheduler.h ../machine/interrupt.h ../machine/callback.h \
++ ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+  ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+  ../threads/pcb.h
+ synchlist.o: ../threads/synchlist.cc /usr/include/stdc-predef.h \
+@@ -3226,11 +3229,11 @@ synchlist.o: ../threads/synchlist.cc /usr/include/stdc-predef.h \
+  ../lib/list.cc ../threads/synch.h ../threads/thread.h \
+  ../machine/machine.h ../machine/translate.h ../userprog/addrspace.h \
+  ../filesys/filesys.h ../filesys/openfile.h ../filesys/filetable.h \
+- ../threads/fileDescriptor.h ../threads/main.h ../threads/kernel.h \
+- ../threads/scheduler.h ../machine/interrupt.h ../machine/callback.h \
+- ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+- ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+- ../threads/pcb.h ../threads/synchlist.cc
++ ../userprog/noff.h ../threads/fileDescriptor.h ../threads/main.h \
++ ../threads/kernel.h ../threads/scheduler.h ../machine/interrupt.h \
++ ../machine/callback.h ../machine/stats.h ../threads/alarm.h \
++ ../machine/timer.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
++ ../threads/ptable.h ../threads/pcb.h ../threads/synchlist.cc
+ thread.o: ../threads/thread.cc /usr/include/stdc-predef.h \
+  ../lib/copyright.h ../threads/thread.h ../lib/utility.h ../lib/sysdep.h \
+  /usr/include/c++/13/iostream /usr/include/c++/13/bits/requires_hosted.h \
+@@ -3393,12 +3396,13 @@ thread.o: ../threads/thread.cc /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/c++/13/cstring \
+  ../machine/machine.h ../machine/translate.h ../userprog/addrspace.h \
+  ../filesys/filesys.h ../filesys/openfile.h ../filesys/filetable.h \
+- ../threads/fileDescriptor.h ../threads/switch.h ../threads/synch.h \
+- ../lib/list.h ../lib/debug.h ../lib/list.cc ../threads/main.h \
+- ../threads/kernel.h ../threads/scheduler.h ../machine/interrupt.h \
+- ../machine/callback.h ../machine/stats.h ../threads/alarm.h \
+- ../machine/timer.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
+- ../threads/ptable.h ../threads/pcb.h
++ ../userprog/noff.h ../threads/fileDescriptor.h ../threads/switch.h \
++ ../threads/synch.h ../lib/list.h ../lib/debug.h ../lib/list.cc \
++ ../threads/main.h ../threads/kernel.h ../threads/scheduler.h \
++ ../machine/interrupt.h ../machine/callback.h ../machine/stats.h \
++ ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
++ ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
++ ../threads/pcb.h
+ ptable.o: ../threads/ptable.cc /usr/include/stdc-predef.h \
+  ../threads/synch.h ../lib/copyright.h ../threads/thread.h \
+  ../lib/utility.h ../lib/sysdep.h /usr/include/c++/13/iostream \
+@@ -3562,10 +3566,10 @@ ptable.o: ../threads/ptable.cc /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/c++/13/cstring \
+  ../machine/machine.h ../machine/translate.h ../userprog/addrspace.h \
+  ../filesys/filesys.h ../filesys/openfile.h ../filesys/filetable.h \
+- ../threads/fileDescriptor.h ../lib/list.h ../lib/debug.h ../lib/list.cc \
+- ../threads/main.h ../threads/kernel.h ../threads/scheduler.h \
+- ../machine/interrupt.h ../machine/callback.h ../machine/stats.h \
+- ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
++ ../userprog/noff.h ../threads/fileDescriptor.h ../lib/list.h \
++ ../lib/debug.h ../lib/list.cc ../threads/main.h ../threads/kernel.h \
++ ../threads/scheduler.h ../machine/interrupt.h ../machine/callback.h \
++ ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+  ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+  ../threads/pcb.h
+ pcb.o: ../threads/pcb.cc /usr/include/stdc-predef.h ../threads/synch.h \
+@@ -3730,10 +3734,10 @@ pcb.o: ../threads/pcb.cc /usr/include/stdc-predef.h ../threads/synch.h \
+  /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/c++/13/cstring \
+  ../machine/machine.h ../machine/translate.h ../userprog/addrspace.h \
+  ../filesys/filesys.h ../filesys/openfile.h ../filesys/filetable.h \
+- ../threads/fileDescriptor.h ../lib/list.h ../lib/debug.h ../lib/list.cc \
+- ../threads/main.h ../threads/kernel.h ../threads/scheduler.h \
+- ../machine/interrupt.h ../machine/callback.h ../machine/stats.h \
+- ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
++ ../userprog/noff.h ../threads/fileDescriptor.h ../lib/list.h \
++ ../lib/debug.h ../lib/list.cc ../threads/main.h ../threads/kernel.h \
++ ../threads/scheduler.h ../machine/interrupt.h ../machine/callback.h \
++ ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+  ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+  ../threads/pcb.h
+ stable.o: ../threads/stable.cc /usr/include/stdc-predef.h \
+@@ -3899,10 +3903,10 @@ stable.o: ../threads/stable.cc /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/c++/13/cstring \
+  ../machine/machine.h ../machine/translate.h ../userprog/addrspace.h \
+  ../filesys/filesys.h ../filesys/openfile.h ../filesys/filetable.h \
+- ../threads/fileDescriptor.h ../lib/list.h ../lib/debug.h ../lib/list.cc \
+- ../threads/main.h ../threads/kernel.h ../threads/scheduler.h \
+- ../machine/interrupt.h ../machine/callback.h ../machine/stats.h \
+- ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
++ ../userprog/noff.h ../threads/fileDescriptor.h ../lib/list.h \
++ ../lib/debug.h ../lib/list.cc ../threads/main.h ../threads/kernel.h \
++ ../threads/scheduler.h ../machine/interrupt.h ../machine/callback.h \
++ ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+  ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+  ../threads/pcb.h
+ sem.o: ../threads/sem.cc /usr/include/stdc-predef.h ../threads/sem.h \
+@@ -4068,10 +4072,10 @@ sem.o: ../threads/sem.cc /usr/include/stdc-predef.h ../threads/sem.h \
+  /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/c++/13/cstring \
+  ../machine/machine.h ../machine/translate.h ../userprog/addrspace.h \
+  ../filesys/filesys.h ../filesys/openfile.h ../filesys/filetable.h \
+- ../threads/fileDescriptor.h ../lib/list.h ../lib/debug.h ../lib/list.cc \
+- ../threads/main.h ../threads/kernel.h ../threads/scheduler.h \
+- ../machine/interrupt.h ../machine/callback.h ../machine/stats.h \
+- ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
++ ../userprog/noff.h ../threads/fileDescriptor.h ../lib/list.h \
++ ../lib/debug.h ../lib/list.cc ../threads/main.h ../threads/kernel.h \
++ ../threads/scheduler.h ../machine/interrupt.h ../machine/callback.h \
++ ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+  ../threads/stable.h ../threads/ptable.h ../threads/pcb.h
+ fileDescriptor.o: ../threads/fileDescriptor.cc /usr/include/stdc-predef.h \
+  ../threads/fileDescriptor.h \
+@@ -4397,12 +4401,12 @@ addrspace.o: ../userprog/addrspace.cc /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/c++/13/cstring \
+  ../threads/kernel.h ../threads/thread.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../threads/fileDescriptor.h \
+- ../threads/scheduler.h ../lib/list.h ../lib/list.cc \
+- ../machine/interrupt.h ../machine/callback.h ../machine/stats.h \
+- ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
++ ../filesys/openfile.h ../filesys/filetable.h ../userprog/noff.h \
++ ../threads/fileDescriptor.h ../threads/scheduler.h ../lib/list.h \
++ ../lib/list.cc ../machine/interrupt.h ../machine/callback.h \
++ ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+  ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+- ../threads/pcb.h ../userprog/noff.h ../threads/synch.h
++ ../threads/pcb.h ../threads/synch.h
+ exception.o: ../userprog/exception.cc /usr/include/stdc-predef.h \
+  ../lib/copyright.h ../threads/main.h ../lib/debug.h ../lib/utility.h \
+  ../lib/sysdep.h /usr/include/c++/13/iostream \
+@@ -4566,10 +4570,10 @@ exception.o: ../userprog/exception.cc /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/c++/13/cstring \
+  ../threads/kernel.h ../threads/thread.h ../machine/machine.h \
+  ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
+- ../filesys/openfile.h ../filesys/filetable.h ../threads/fileDescriptor.h \
+- ../threads/scheduler.h ../lib/list.h ../lib/list.cc \
+- ../machine/interrupt.h ../machine/callback.h ../machine/stats.h \
+- ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
++ ../filesys/openfile.h ../filesys/filetable.h ../userprog/noff.h \
++ ../threads/fileDescriptor.h ../threads/scheduler.h ../lib/list.h \
++ ../lib/list.cc ../machine/interrupt.h ../machine/callback.h \
++ ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+  ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+  ../threads/pcb.h ../userprog/syscall.h ../userprog/errno.h \
+  ../userprog/ksyscall.h ../userprog/synchconsole.h ../machine/console.h \
+@@ -4738,11 +4742,12 @@ synchconsole.o: ../userprog/synchconsole.cc /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/c++/13/cstring \
+  ../machine/machine.h ../machine/translate.h ../userprog/addrspace.h \
+  ../filesys/filesys.h ../filesys/openfile.h ../filesys/filetable.h \
+- ../threads/fileDescriptor.h ../lib/list.h ../lib/debug.h ../lib/list.cc \
+- ../threads/main.h ../threads/kernel.h ../threads/scheduler.h \
+- ../machine/interrupt.h ../machine/stats.h ../threads/alarm.h \
+- ../machine/timer.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
+- ../threads/ptable.h ../threads/pcb.h
++ ../userprog/noff.h ../threads/fileDescriptor.h ../lib/list.h \
++ ../lib/debug.h ../lib/list.cc ../threads/main.h ../threads/kernel.h \
++ ../threads/scheduler.h ../machine/interrupt.h ../machine/stats.h \
++ ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
++ ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
++ ../threads/pcb.h
+ directory.o: ../filesys/directory.cc /usr/include/stdc-predef.h \
+  ../lib/copyright.h ../lib/utility.h ../filesys/filehdr.h \
+  ../machine/disk.h ../machine/callback.h ../filesys/pbitmap.h \
+@@ -5071,11 +5076,11 @@ filehdr.o: ../filesys/filehdr.cc /usr/include/stdc-predef.h \
+  ../lib/debug.h ../filesys/synchdisk.h ../threads/synch.h \
+  ../threads/thread.h ../machine/machine.h ../machine/translate.h \
+  ../userprog/addrspace.h ../filesys/filesys.h ../filesys/filetable.h \
+- ../threads/fileDescriptor.h ../lib/list.h ../lib/list.cc \
+- ../threads/main.h ../threads/kernel.h ../threads/scheduler.h \
+- ../machine/interrupt.h ../machine/stats.h ../threads/alarm.h \
+- ../machine/timer.h ../threads/stable.h ../threads/sem.h \
+- ../threads/ptable.h ../threads/pcb.h
++ ../userprog/noff.h ../threads/fileDescriptor.h ../lib/list.h \
++ ../lib/list.cc ../threads/main.h ../threads/kernel.h \
++ ../threads/scheduler.h ../machine/interrupt.h ../machine/stats.h \
++ ../threads/alarm.h ../machine/timer.h ../threads/stable.h \
++ ../threads/sem.h ../threads/ptable.h ../threads/pcb.h
+ filesys.o: ../filesys/filesys.cc /usr/include/stdc-predef.h \
+  ../lib/copyright.h ../lib/sysdep.h /usr/include/c++/13/iostream \
+  /usr/include/c++/13/bits/requires_hosted.h \
+@@ -5239,7 +5244,7 @@ filesys.o: ../filesys/filesys.cc /usr/include/stdc-predef.h \
+  ../filesys/openfile.h ../lib/utility.h ../filesys/filetable.h \
+  ../filesys/filesys.h ../threads/kernel.h ../lib/debug.h \
+  ../threads/thread.h ../machine/machine.h ../machine/translate.h \
+- ../userprog/addrspace.h ../threads/fileDescriptor.h \
++ ../userprog/addrspace.h ../userprog/noff.h ../threads/fileDescriptor.h \
+  ../threads/scheduler.h ../lib/list.h ../lib/list.cc \
+  ../machine/interrupt.h ../machine/callback.h ../machine/stats.h \
+  ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+@@ -5571,11 +5576,12 @@ synchdisk.o: ../filesys/synchdisk.cc /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/c++/13/cstring \
+  ../machine/machine.h ../machine/translate.h ../userprog/addrspace.h \
+  ../filesys/filesys.h ../filesys/openfile.h ../filesys/filetable.h \
+- ../threads/fileDescriptor.h ../lib/list.h ../lib/debug.h ../lib/list.cc \
+- ../threads/main.h ../threads/kernel.h ../threads/scheduler.h \
+- ../machine/interrupt.h ../machine/stats.h ../threads/alarm.h \
+- ../machine/timer.h ../lib/bitmap.h ../threads/stable.h ../threads/sem.h \
+- ../threads/ptable.h ../threads/pcb.h
++ ../userprog/noff.h ../threads/fileDescriptor.h ../lib/list.h \
++ ../lib/debug.h ../lib/list.cc ../threads/main.h ../threads/kernel.h \
++ ../threads/scheduler.h ../machine/interrupt.h ../machine/stats.h \
++ ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
++ ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
++ ../threads/pcb.h
+ post.o: ../network/post.cc /usr/include/stdc-predef.h ../lib/copyright.h \
+  ../network/post.h ../lib/utility.h ../machine/callback.h \
+  ../machine/network.h ../threads/synchlist.h ../lib/list.h ../lib/debug.h \
+@@ -5741,9 +5747,9 @@ post.o: ../network/post.cc /usr/include/stdc-predef.h ../lib/copyright.h \
+  ../lib/list.cc ../threads/synch.h ../threads/thread.h \
+  ../machine/machine.h ../machine/translate.h ../userprog/addrspace.h \
+  ../filesys/filesys.h ../filesys/openfile.h ../filesys/filetable.h \
+- ../threads/fileDescriptor.h ../threads/main.h ../threads/kernel.h \
+- ../threads/scheduler.h ../machine/interrupt.h ../machine/stats.h \
+- ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
++ ../userprog/noff.h ../threads/fileDescriptor.h ../threads/main.h \
++ ../threads/kernel.h ../threads/scheduler.h ../machine/interrupt.h \
++ ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+  ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+  ../threads/pcb.h ../threads/synchlist.cc
+ # DEPENDENCIES MUST END AT END OF FILE
+diff --git a/nachos-project/code/test/Makefile b/nachos-project/code/test/Makefile
+index df551c3..b219860 100755
+--- a/nachos-project/code/test/Makefile
++++ b/nachos-project/code/test/Makefile
+@@ -112,7 +112,7 @@ ifeq ($(hosttype),unknown)
+ PROGRAMS = unknownhost
+ else
+ # change this if you create a new test program!
+-PROGRAMS = pipeAdd pipeAbs pipeTestChild pipeTest printReader printWriter sleepTest prioritySchedulerTest priority1 priority2 priority3 child abs add halt shell matmult sort segments test_syscall num_io char_io random str_io ascii bubblesort help create_file open_file readwrite exec test_sem sinhvien voinuoc main
++PROGRAMS = demandPaging1 demandPaging2 pipeAdd pipeAbs pipeTestChild pipeTest printReader printWriter sleepTest prioritySchedulerTest priority1 priority2 priority3 child abs add halt shell matmult sort segments test_syscall num_io char_io random str_io ascii bubblesort help create_file open_file readwrite exec test_sem sinhvien voinuoc main
+ endif
+ 
+ all: $(PROGRAMS)
+@@ -194,6 +194,18 @@ pipeAbs: pipeAbs.o start.o
+ 	$(LD) $(LDFLAGS) start.o pipeAbs.o -o pipeAbs.coff
+ 	$(COFF2NOFF) pipeAbs.coff pipeAbs
+ 
++demandPaging1.o: demandPaging1.c
++	$(CC) $(CFLAGS) -c demandPaging1.c
++demandPaging1: demandPaging1.o start.o
++	$(LD) $(LDFLAGS) start.o demandPaging1.o -o demandPaging1.coff
++	$(COFF2NOFF) demandPaging1.coff demandPaging1
++
++demandPaging2.o: demandPaging2.c
++	$(CC) $(CFLAGS) -c demandPaging2.c
++demandPaging2: demandPaging2.o start.o
++	$(LD) $(LDFLAGS) start.o demandPaging2.o -o demandPaging2.coff
++	$(COFF2NOFF) demandPaging2.coff demandPaging2
++
+ add.o: add.c
+ 	$(CC) $(CFLAGS) -c add.c
+ 
+diff --git a/nachos-project/code/test/abs.c b/nachos-project/code/test/abs.c
+index f397588..5f32604 100755
+--- a/nachos-project/code/test/abs.c
++++ b/nachos-project/code/test/abs.c
+@@ -3,8 +3,9 @@
+ int main() {
+     unsigned int result;
+     int number = ReadNum();
++    PrintString("Hi guys welcome to nachos lab IIT Tirupati\n");
+     result = Abs(number);
+-    PrintString("The absolute value of addition is: ");
++    PrintString("The absolute value is: ");
+     PrintNum(result);
+     PrintString("\n");
+     Halt();
+diff --git a/nachos-project/code/test/demandPaging1.c b/nachos-project/code/test/demandPaging1.c
+new file mode 100644
+index 0000000..cd8cdfe
+--- /dev/null
++++ b/nachos-project/code/test/demandPaging1.c
+@@ -0,0 +1,18 @@
++#include "syscall.h"
++
++int arr[30][30];
++
++int main(){
++	int ROWS = 30;
++	int COLS = 30;
++	int i = 0;
++	int j = 0;
++	PrintString("Hello\n");
++	for(i=0;i<ROWS;i++){
++		for(j=0;j<COLS;j++){
++			arr[i][j]=1;
++		}
++	}
++	PrintString("Done with dtest1\n");
++	Halt();
++}
+diff --git a/nachos-project/code/test/demandPaging2.c b/nachos-project/code/test/demandPaging2.c
+new file mode 100644
+index 0000000..bdf845c
+--- /dev/null
++++ b/nachos-project/code/test/demandPaging2.c
+@@ -0,0 +1,17 @@
++#include "syscall.h"
++
++int arr[30][30];
++
++int main(){
++        int ROWS = 30;
++        int COLS = 30;
++        int i = 0;
++        int j = 0;
++        for(i=0;i<COLS;i++){
++                for(j=0;j<ROWS;j++){
++                        arr[i][j]=1;
++                }
++        }
++	PrintString("Done with dtest2\n");
++        Halt();
++}
+diff --git a/nachos-project/code/userprog/addrspace.cc b/nachos-project/code/userprog/addrspace.cc
+index 7784791..4aed2b5 100755
+--- a/nachos-project/code/userprog/addrspace.cc
++++ b/nachos-project/code/userprog/addrspace.cc
+@@ -87,9 +87,11 @@ AddrSpace::AddrSpace() {
+ AddrSpace::~AddrSpace() {
+     int i;
+     for (i = 0; i < numPages; i++) {
+-        kernel->gPhysPageBitMap->Clear(pageTable[i].physicalPage);
++	if(pageTable[i].valid == TRUE)
++        	kernel->gPhysPageBitMap->Clear(pageTable[i].physicalPage);
+     }
+     delete[] pageTable;
++    delete processExecutable;
+ }
+ 
+ //----------------------------------------------------------------------
+@@ -149,42 +151,99 @@ AddrSpace::AddrSpace(char *fileName) {
+     pageTable = new TranslationEntry[numPages];
+     for (i = 0; i < numPages; i++) {
+         pageTable[i].virtualPage = i;  // for now, virtual page # = phys page #
+-        pageTable[i].physicalPage = kernel->gPhysPageBitMap->FindAndSet();
++        //pageTable[i].physicalPage = kernel->gPhysPageBitMap->FindAndSet();
++	//comenting this out and we are not reserving a physical page for the virtual page now and on demand we will issue a physical page
++	pageTable[i].physicalPage = -1; // this one just assigns a temp number for the physical page mapped to virual page
+         // cerr << pageTable[i].physicalPage << endl;
+-        pageTable[i].valid = TRUE;
++        pageTable[i].valid = FALSE; // here we are marking the mapping as invalid and when the actual physical page is allocated to be mapped to this virtual page then we set it TRUE.
+         pageTable[i].use = FALSE;
+         pageTable[i].dirty = FALSE;
+         pageTable[i].readOnly = FALSE;  // if the code segment was entirely on
+         // a separate page, we could set its
+         // pages to be read-only
+         // xóa các trang này trên memory
+-        bzero(&(kernel->machine
+-                    ->mainMemory[pageTable[i].physicalPage * PageSize]),
+-              PageSize);
++	// do this also when we allocate a physical page
++      //  bzero(&(kernel->machine->mainMemory[pageTable[i].physicalPage * PageSize]),PageSize);
+         DEBUG(dbgAddr, "phyPage " << pageTable[i].physicalPage);
+     }
+ 
+-    if (noffH.code.size > 0) {
+-        for (i = 0; i < numPages; i++)
+-            executable->ReadAt(
+-                &(kernel->machine->mainMemory[noffH.code.virtualAddr]) +
+-                    (pageTable[i].physicalPage * PageSize),
+-                PageSize, noffH.code.inFileAddr + (i * PageSize));
+-    }
+-
+-    if (noffH.initData.size > 0) {
+-        for (i = 0; i < numPages; i++)
+-            executable->ReadAt(
+-                &(kernel->machine->mainMemory[noffH.initData.virtualAddr]) +
+-                    (pageTable[i].physicalPage * PageSize),
+-                PageSize, noffH.initData.inFileAddr + (i * PageSize));
+-    }
+-
++// Here we are not loading the pages instead we load on demand that is on page fault
++//    if (noffH.code.size > 0) {
++//        for (i = 0; i < numPages; i++)
++//            executable->ReadAt(
++//                &(kernel->machine->mainMemory[noffH.code.virtualAddr]) +
++//                    (pageTable[i].physicalPage * PageSize),
++//                PageSize, noffH.code.inFileAddr + (i * PageSize));
++//    }
++//
++//    if (noffH.initData.size > 0) {
++//        for (i = 0; i < numPages; i++)
++//            executable->ReadAt(
++//                &(kernel->machine->mainMemory[noffH.initData.virtualAddr]) +
++//                    (pageTable[i].physicalPage * PageSize),
++//                PageSize, noffH.initData.inFileAddr + (i * PageSize));
++//    }
++
++
++    //storing the executable and the noffHeader as class fields to use from the exception.cc
++    processExecutable = executable;
++    noffHeader = noffH;
+     kernel->addrLock->V();
+-    delete executable;
++   // delete executable;
+     return;
+ }
+ 
++
++//---------------------------------------------------------------------
++//AddrSpace::LoadPage
++//	Load the page when a page fault occurs
++//--------------------------------------------------------------------
++
++void AddrSpace::LoadPage(int vaddr) {
++//	unsigned int vaddr = kernel->machine->ReadRegister(BadVAddrReg);
++	unsigned int vpn = vaddr / PageSize;
++//	cerr << "code: virtualAddr=" << noffHeader.code.virtualAddr 
++//         << " size=" << noffHeader.code.size << endl;
++//    	cerr << "initData: virtualAddr=" << noffHeader.initData.virtualAddr 
++//        << " size=" << noffHeader.initData.size << endl;
++//    	cerr << "Checking vaddr=" << vaddr << endl;
++//	cerr << "readonlyData: virtualAddr=" << noffHeader.readonlyData.virtualAddr
++//	     << " size=" << noffHeader.readonlyData.size << endl;
++	cout<<"[Page Fault] Occured at the virtual page "<<vpn<<" and at the virtual address "<<vaddr<<endl;
++	kernel->stats->numPageFaults++;
++	int page = kernel->gPhysPageBitMap->FindAndSet();
++	if(page==-1){
++		printf("No free space left\n");
++		return;
++	}
++	pageTable[vpn].physicalPage = page;
++	pageTable[vpn].valid = TRUE;
++
++	//do this when we allocate a physical page fill zeros in from starting of that page till that page ends so we clean previous chunk
++	bzero(&(kernel->machine->mainMemory[pageTable[vpn].physicalPage * PageSize]),PageSize);
++
++	if(vaddr >= noffHeader.code.virtualAddr && vaddr < noffHeader.code.virtualAddr + noffHeader.code.size){
++		unsigned int codepn = (vaddr-noffHeader.code.virtualAddr) / PageSize;
++		processExecutable->ReadAt(&(kernel->machine->mainMemory[pageTable[vpn].physicalPage * PageSize]), PageSize, noffHeader.code.inFileAddr + (codepn * PageSize));
++	}
++	else if(vaddr >= noffHeader.initData.virtualAddr && vaddr < noffHeader.initData.virtualAddr + noffHeader.initData.size){
++		unsigned int initDatapn = (vaddr-noffHeader.initData.virtualAddr) / PageSize;
++		processExecutable->ReadAt(&(kernel->machine->mainMemory[pageTable[vpn].physicalPage * PageSize]), PageSize, noffHeader.initData.inFileAddr + (initDatapn * PageSize));
++	}
++	//for read only data
++	#ifdef RDATA
++	else if(vaddr >= noffHeader.readonlyData.virtualAddr && vaddr < noffHeader.readonlyData.virtualAddr + noffHeader.readonlyData.size){
++		unsigned int rdatapn = (vaddr - noffHeader.readonlyData.virtualAddr) / PageSize;
++		processExecutable->ReadAt(&(kernel->machine->mainMemory[pageTable[vpn].physicalPage * PageSize]), PageSize, noffHeader.readonlyData.inFileAddr + (rdatapn * PageSize));
++	}
++	#endif
++
++	//uninitData and stack pages do not need ReadAt from executable
++	//uninitData: C standard guarantees uninitialized globals are zero — bzero handles it
++	//stack: runtime data, does not exist in executable file — bzero handles it
++	return ;
++}
++
+ //----------------------------------------------------------------------
+ // AddrSpace::Execute
+ // 	Run a user program using the current thread
+diff --git a/nachos-project/code/userprog/addrspace.h b/nachos-project/code/userprog/addrspace.h
+index b39cc76..00d2781 100755
+--- a/nachos-project/code/userprog/addrspace.h
++++ b/nachos-project/code/userprog/addrspace.h
+@@ -15,6 +15,7 @@
+ 
+ #include "copyright.h"
+ #include "filesys.h"
++#include "noff.h"
+ #include "fileDescriptor.h"
+ 
+ #define UserStackSize 1024  // increase this as necessary!
+@@ -32,16 +33,22 @@ class AddrSpace {
+ 
+     void SaveState();     // Save/restore address space-specific
+     void RestoreState();  // info on a context switch
+-
++    
++    OpenFile *processExecutable;
++    NoffHeader noffHeader;
+     // Translate virtual address _vaddr_
+     // to physical address _paddr_. _mode_
+     // is 0 for Read, 1 for Write.
+     
++    TranslationEntry *pageTable;  // Assume linear page table translation
++                                  // for now!
++    
+     ExceptionType Translate(unsigned int vaddr, unsigned int *paddr, int mode);
+     // void InitRegisters();
++    
++    //declaration for LoadPage method
++    void LoadPage(int vaddr);
+    private:
+-    TranslationEntry *pageTable;  // Assume linear page table translation
+-                                  // for now!
+     unsigned int numPages;        // Number of pages in the virtual
+                                   // address space
+ 
+diff --git a/nachos-project/code/userprog/exception.cc b/nachos-project/code/userprog/exception.cc
+index 86e528c..085c511 100755
+--- a/nachos-project/code/userprog/exception.cc
++++ b/nachos-project/code/userprog/exception.cc
+@@ -62,9 +62,14 @@ char* stringUser2System(int addr, int convert_length = -1) {
+     int length = 0;
+     bool stop = false;
+     char* str;
+-
++    //as we are doing this in kernel space PageFaultException is not triggered in kernel mode so that we need to manually check and load.
+     do {
+         int oneChar;
++//	int vpn = (addr + length) / PageSize;
++//	if(kernel->currentThread->space->pageTable[vpn].valid==FALSE){
++//		kernel->stats->numPageFaults++;
++//		kernel->currentThread->space->LoadPage(addr+length,vpn);
++//	}
+         kernel->machine->ReadMem(addr + length, 1, &oneChar);
+         length++;
+         // if convert_length == -1, we use '\0' to terminate the process
+@@ -76,10 +81,15 @@ char* stringUser2System(int addr, int convert_length = -1) {
+     str = new char[length];
+     for (int i = 0; i < length; i++) {
+         int oneChar;
+-        kernel->machine->ReadMem(addr + i, 1,
+-                                 &oneChar);  // copy characters to kernel space
++//	int vpn = (addr + i) / PageSize;
++//	if(kernel->currentThread->space->pageTable[vpn].valid==FALSE){
++//		kernel->stats->numPageFaults++;
++//		kernel->currentThread->space->LoadPage(addr+i,vpn);
++//	}
++        kernel->machine->ReadMem(addr + i, 1,&oneChar);  // copy characters to kernel space
+         str[i] = (unsigned char)oneChar;
+     }
++  //  cerr << "length in stringUser2System = " << length << endl;
+     return str;
+ }
+ 
+@@ -568,7 +578,13 @@ void ExceptionHandler(ExceptionType which) {
+             kernel->interrupt->setStatus(SystemMode);
+             DEBUG(dbgSys, "Switch to system mode\n");
+             break;
+-        case PageFaultException:
++        case PageFaultException:{
++	    //kernel->stats->numPageFaults++;
++	    int vaddr = kernel->machine->ReadRegister(BadVAddrReg);
++	    kernel->currentThread->space->LoadPage(vaddr);
++	    kernel->currentThread->space->RestoreState();
++	    return;
++	}
+         case ReadOnlyException:
+         case BusErrorException:
+         case AddressErrorException:
+diff --git a/nachos-project/code/userprog/noff.h b/nachos-project/code/userprog/noff.h
+index 817e506..2c5145a 100755
+--- a/nachos-project/code/userprog/noff.h
++++ b/nachos-project/code/userprog/noff.h
+@@ -4,6 +4,9 @@
+  *     Basically, we only know about three types of segments:
+  *	code (read-only), initialized data, and unitialized data
+  */
++#ifndef NOFF_H
++#define NOFF_H
++
+ 
+ #define NOFFMAGIC                            \
+     0xbadfad /* magic number denoting Nachos \
+@@ -27,3 +30,5 @@ typedef struct noffHeader {
+                          * should be zero'ed before use
+                          */
+ } NoffHeader;
++
++#endif //NOFF_H
