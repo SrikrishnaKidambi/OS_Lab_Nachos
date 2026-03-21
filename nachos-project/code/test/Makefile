@@ -112,7 +112,7 @@ ifeq ($(hosttype),unknown)
 PROGRAMS = unknownhost
 else
 # change this if you create a new test program!
-PROGRAMS = pipeAdd pipeAbs pipeTestChild pipeTest printReader printWriter sleepTest prioritySchedulerTest priority1 priority2 priority3 child abs add halt shell matmult sort segments test_syscall num_io char_io random str_io ascii bubblesort help create_file open_file readwrite exec test_sem sinhvien voinuoc main
+PROGRAMS = demandPaging1 demandPaging2 pipeAdd pipeAbs pipeTestChild pipeTest printReader printWriter sleepTest prioritySchedulerTest priority1 priority2 priority3 child abs add halt shell matmult sort segments test_syscall num_io char_io random str_io ascii bubblesort help create_file open_file readwrite exec test_sem sinhvien voinuoc main
 endif
 
 all: $(PROGRAMS)
@@ -193,6 +193,18 @@ pipeAbs.o: pipeAbs.c
 pipeAbs: pipeAbs.o start.o
 	$(LD) $(LDFLAGS) start.o pipeAbs.o -o pipeAbs.coff
 	$(COFF2NOFF) pipeAbs.coff pipeAbs
+
+demandPaging1.o: demandPaging1.c
+	$(CC) $(CFLAGS) -c demandPaging1.c
+demandPaging1: demandPaging1.o start.o
+	$(LD) $(LDFLAGS) start.o demandPaging1.o -o demandPaging1.coff
+	$(COFF2NOFF) demandPaging1.coff demandPaging1
+
+demandPaging2.o: demandPaging2.c
+	$(CC) $(CFLAGS) -c demandPaging2.c
+demandPaging2: demandPaging2.o start.o
+	$(LD) $(LDFLAGS) start.o demandPaging2.o -o demandPaging2.coff
+	$(COFF2NOFF) demandPaging2.coff demandPaging2
 
 add.o: add.c
 	$(CC) $(CFLAGS) -c add.c

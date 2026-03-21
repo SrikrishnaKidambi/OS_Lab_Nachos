@@ -87,9 +87,11 @@ AddrSpace::AddrSpace() {
 AddrSpace::~AddrSpace() {
     int i;
     for (i = 0; i < numPages; i++) {
-        kernel->gPhysPageBitMap->Clear(pageTable[i].physicalPage);
+	if(pageTable[i].valid == TRUE)
+        	kernel->gPhysPageBitMap->Clear(pageTable[i].physicalPage);
     }
     delete[] pageTable;
+    delete processExecutable;
 }
 
 //----------------------------------------------------------------------
@@ -149,40 +151,97 @@ AddrSpace::AddrSpace(char *fileName) {
     pageTable = new TranslationEntry[numPages];
     for (i = 0; i < numPages; i++) {
         pageTable[i].virtualPage = i;  // for now, virtual page # = phys page #
-        pageTable[i].physicalPage = kernel->gPhysPageBitMap->FindAndSet();
+        //pageTable[i].physicalPage = kernel->gPhysPageBitMap->FindAndSet();
+	//comenting this out and we are not reserving a physical page for the virtual page now and on demand we will issue a physical page
+	pageTable[i].physicalPage = -1; // this one just assigns a temp number for the physical page mapped to virual page
         // cerr << pageTable[i].physicalPage << endl;
-        pageTable[i].valid = TRUE;
+        pageTable[i].valid = FALSE; // here we are marking the mapping as invalid and when the actual physical page is allocated to be mapped to this virtual page then we set it TRUE.
         pageTable[i].use = FALSE;
         pageTable[i].dirty = FALSE;
         pageTable[i].readOnly = FALSE;  // if the code segment was entirely on
         // a separate page, we could set its
         // pages to be read-only
         // xóa các trang này trên memory
-        bzero(&(kernel->machine
-                    ->mainMemory[pageTable[i].physicalPage * PageSize]),
-              PageSize);
+	// do this also when we allocate a physical page
+      //  bzero(&(kernel->machine->mainMemory[pageTable[i].physicalPage * PageSize]),PageSize);
         DEBUG(dbgAddr, "phyPage " << pageTable[i].physicalPage);
     }
 
-    if (noffH.code.size > 0) {
-        for (i = 0; i < numPages; i++)
-            executable->ReadAt(
-                &(kernel->machine->mainMemory[noffH.code.virtualAddr]) +
-                    (pageTable[i].physicalPage * PageSize),
-                PageSize, noffH.code.inFileAddr + (i * PageSize));
-    }
+// Here we are not loading the pages instead we load on demand that is on page fault
+//    if (noffH.code.size > 0) {
+//        for (i = 0; i < numPages; i++)
+//            executable->ReadAt(
+//                &(kernel->machine->mainMemory[noffH.code.virtualAddr]) +
+//                    (pageTable[i].physicalPage * PageSize),
+//                PageSize, noffH.code.inFileAddr + (i * PageSize));
+//    }
+//
+//    if (noffH.initData.size > 0) {
+//        for (i = 0; i < numPages; i++)
+//            executable->ReadAt(
+//                &(kernel->machine->mainMemory[noffH.initData.virtualAddr]) +
+//                    (pageTable[i].physicalPage * PageSize),
+//                PageSize, noffH.initData.inFileAddr + (i * PageSize));
+//    }
 
-    if (noffH.initData.size > 0) {
-        for (i = 0; i < numPages; i++)
-            executable->ReadAt(
-                &(kernel->machine->mainMemory[noffH.initData.virtualAddr]) +
-                    (pageTable[i].physicalPage * PageSize),
-                PageSize, noffH.initData.inFileAddr + (i * PageSize));
-    }
 
+    //storing the executable and the noffHeader as class fields to use from the exception.cc
+    processExecutable = executable;
+    noffHeader = noffH;
     kernel->addrLock->V();
-    delete executable;
+   // delete executable;
     return;
+}
+
+
+//---------------------------------------------------------------------
+//AddrSpace::LoadPage
+//	Load the page when a page fault occurs
+//--------------------------------------------------------------------
+
+void AddrSpace::LoadPage(int vaddr) {
+//	unsigned int vaddr = kernel->machine->ReadRegister(BadVAddrReg);
+	unsigned int vpn = vaddr / PageSize;
+//	cerr << "code: virtualAddr=" << noffHeader.code.virtualAddr 
+//         << " size=" << noffHeader.code.size << endl;
+//    	cerr << "initData: virtualAddr=" << noffHeader.initData.virtualAddr 
+//        << " size=" << noffHeader.initData.size << endl;
+//    	cerr << "Checking vaddr=" << vaddr << endl;
+//	cerr << "readonlyData: virtualAddr=" << noffHeader.readonlyData.virtualAddr
+//	     << " size=" << noffHeader.readonlyData.size << endl;
+	cout<<"[Page Fault] Occured at the virtual page "<<vpn<<" and at the virtual address "<<vaddr<<endl;
+	kernel->stats->numPageFaults++;
+	int page = kernel->gPhysPageBitMap->FindAndSet();
+	if(page==-1){
+		printf("No free space left\n");
+		return;
+	}
+	pageTable[vpn].physicalPage = page;
+	pageTable[vpn].valid = TRUE;
+
+	//do this when we allocate a physical page fill zeros in from starting of that page till that page ends so we clean previous chunk
+	bzero(&(kernel->machine->mainMemory[pageTable[vpn].physicalPage * PageSize]),PageSize);
+
+	if(vaddr >= noffHeader.code.virtualAddr && vaddr < noffHeader.code.virtualAddr + noffHeader.code.size){
+		unsigned int codepn = (vaddr-noffHeader.code.virtualAddr) / PageSize;
+		processExecutable->ReadAt(&(kernel->machine->mainMemory[pageTable[vpn].physicalPage * PageSize]), PageSize, noffHeader.code.inFileAddr + (codepn * PageSize));
+	}
+	else if(vaddr >= noffHeader.initData.virtualAddr && vaddr < noffHeader.initData.virtualAddr + noffHeader.initData.size){
+		unsigned int initDatapn = (vaddr-noffHeader.initData.virtualAddr) / PageSize;
+		processExecutable->ReadAt(&(kernel->machine->mainMemory[pageTable[vpn].physicalPage * PageSize]), PageSize, noffHeader.initData.inFileAddr + (initDatapn * PageSize));
+	}
+	//for read only data
+	#ifdef RDATA
+	else if(vaddr >= noffHeader.readonlyData.virtualAddr && vaddr < noffHeader.readonlyData.virtualAddr + noffHeader.readonlyData.size){
+		unsigned int rdatapn = (vaddr - noffHeader.readonlyData.virtualAddr) / PageSize;
+		processExecutable->ReadAt(&(kernel->machine->mainMemory[pageTable[vpn].physicalPage * PageSize]), PageSize, noffHeader.readonlyData.inFileAddr + (rdatapn * PageSize));
+	}
+	#endif
+
+	//uninitData and stack pages do not need ReadAt from executable
+	//uninitData: C standard guarantees uninitialized globals are zero — bzero handles it
+	//stack: runtime data, does not exist in executable file — bzero handles it
+	return ;
 }
 
 //----------------------------------------------------------------------

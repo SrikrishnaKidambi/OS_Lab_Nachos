@@ -62,9 +62,14 @@ char* stringUser2System(int addr, int convert_length = -1) {
     int length = 0;
     bool stop = false;
     char* str;
-
+    //as we are doing this in kernel space PageFaultException is not triggered in kernel mode so that we need to manually check and load.
     do {
         int oneChar;
+//	int vpn = (addr + length) / PageSize;
+//	if(kernel->currentThread->space->pageTable[vpn].valid==FALSE){
+//		kernel->stats->numPageFaults++;
+//		kernel->currentThread->space->LoadPage(addr+length,vpn);
+//	}
         kernel->machine->ReadMem(addr + length, 1, &oneChar);
         length++;
         // if convert_length == -1, we use '\0' to terminate the process
@@ -76,10 +81,15 @@ char* stringUser2System(int addr, int convert_length = -1) {
     str = new char[length];
     for (int i = 0; i < length; i++) {
         int oneChar;
-        kernel->machine->ReadMem(addr + i, 1,
-                                 &oneChar);  // copy characters to kernel space
+//	int vpn = (addr + i) / PageSize;
+//	if(kernel->currentThread->space->pageTable[vpn].valid==FALSE){
+//		kernel->stats->numPageFaults++;
+//		kernel->currentThread->space->LoadPage(addr+i,vpn);
+//	}
+        kernel->machine->ReadMem(addr + i, 1,&oneChar);  // copy characters to kernel space
         str[i] = (unsigned char)oneChar;
     }
+  //  cerr << "length in stringUser2System = " << length << endl;
     return str;
 }
 
@@ -568,7 +578,13 @@ void ExceptionHandler(ExceptionType which) {
             kernel->interrupt->setStatus(SystemMode);
             DEBUG(dbgSys, "Switch to system mode\n");
             break;
-        case PageFaultException:
+        case PageFaultException:{
+	    //kernel->stats->numPageFaults++;
+	    int vaddr = kernel->machine->ReadRegister(BadVAddrReg);
+	    kernel->currentThread->space->LoadPage(vaddr);
+	    kernel->currentThread->space->RestoreState();
+	    return;
+	}
         case ReadOnlyException:
         case BusErrorException:
         case AddressErrorException:
