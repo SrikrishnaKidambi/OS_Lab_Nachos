@@ -14,7 +14,7 @@ int main(){
 	Free(a);
 	//PrintString("Free OK\n");
 
-	b = (int*)Malloc(10);
+	b = (int*)Malloc(4);
 	*b = 10;
 	PrintNum(*b);
 	//PrintString("\n");
