@@ -1,0 +1,15 @@
+void * my_malloc(unsigned int bytes) - handle using brk
+void * my_free - store free blocks and say we are requested 20 bytes and use the 24bytes beginning 4 bytes use for meta data
+
+Why void pointer? - Can typecast to other pointers
+
+c = (char *) my_malloc(a
+
+void * b; - size is 4 bytes
+
+Q) How much does b++ move if b is  a void pointer?
+
+
+blk_metadata -> p_blk, n_blk, size
+
+

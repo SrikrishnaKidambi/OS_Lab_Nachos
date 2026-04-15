@@ -112,7 +112,7 @@ ifeq ($(hosttype),unknown)
 PROGRAMS = unknownhost
 else
 # change this if you create a new test program!
-PROGRAMS = demandPaging1 demandPaging2 pipeAdd pipeAbs pipeTestChild pipeTest printReader printWriter sleepTest prioritySchedulerTest priority1 priority2 priority3 child abs add halt shell matmult sort segments test_syscall num_io char_io random str_io ascii bubblesort help create_file open_file readwrite exec test_sem sinhvien voinuoc main
+PROGRAMS = mallocTest2 mallocTest1 mallocTest demandPaging1 demandPaging2 pipeAdd pipeAbs pipeTestChild pipeTest printReader printWriter sleepTest prioritySchedulerTest priority1 priority2 priority3 child abs add halt shell matmult sort segments test_syscall num_io char_io random str_io ascii bubblesort help create_file open_file readwrite exec test_sem sinhvien voinuoc main
 endif
 
 all: $(PROGRAMS)
@@ -140,6 +140,29 @@ sleepTest: sleepTest.o start.o
 	$(LD) $(LDFLAGS) start.o sleepTest.o -o sleepTest.coff
 	$(COFF2NOFF) sleepTest.coff sleepTest
 
+mallocTest.o: mallocTest.c malloc.h
+	$(CC) $(CFLAGS) -c mallocTest.c
+
+mallocTest1.o: mallocTest1.c malloc.h
+	$(CC) $(CFLAGS) -c mallocTest1.c
+
+mallocTest2.o: mallocTest2.c malloc.h
+	$(CC) $(CFLAGS) -c mallocTest2.c
+
+malloc.o: malloc.c malloc.h
+	$(CC) $(CFLAGS) -c malloc.c
+
+mallocTest: mallocTest.o malloc.o start.o
+	$(LD) $(LDFLAGS) start.o malloc.o mallocTest.o -o mallocTest.coff
+	$(COFF2NOFF) mallocTest.coff mallocTest
+
+mallocTest1: mallocTest1.o malloc.o start.o
+	$(LD) $(LDFLAGS) start.o malloc.o mallocTest1.o -o mallocTest1.coff
+	$(COFF2NOFF) mallocTest1.coff mallocTest1
+
+mallocTest2: mallocTest2.o malloc.o start.o
+	$(LD) $(LDFLAGS) start.o malloc.o mallocTest2.o -o mallocTest2.coff
+	$(COFF2NOFF) mallocTest2.coff mallocTest2
 priority1.o: priority1.c
 	$(CC) $(CFLAGS) -c priority1.c
 priority1: priority1.o start.o

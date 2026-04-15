@@ -446,6 +446,13 @@ void handle_SC_Sleep() {
     return move_program_counter();
 }
 
+void handle_SC_Sbrk() {
+   int bytes = kernel->machine->ReadRegister(4);
+   int userVAddr = kernel->currentThread->space->Sbrk(bytes);
+   kernel->machine->WriteRegister(2,userVAddr);
+   return move_program_counter();
+}
+
 void handle_SC_Pipe() {
    int rd = kernel->machine->ReadRegister(4);
    int wd = kernel->machine->ReadRegister(5);
@@ -599,6 +606,8 @@ void ExceptionHandler(ExceptionType which) {
             switch (type) {
                 case SC_Halt:
                     return handle_SC_Halt();
+		case SC_Sbrk:
+		    return handle_SC_Sbrk();
 		case SC_Abs:
 		    return handle_SC_Abs();
 		case SC_Sleep:

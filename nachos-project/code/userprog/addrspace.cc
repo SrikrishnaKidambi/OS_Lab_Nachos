@@ -127,8 +127,11 @@ AddrSpace::AddrSpace(char *fileName) {
     ASSERT(noffH.noffMagic == NOFFMAGIC);
     kernel->addrLock->P();
     // how big is address space?
-    size = noffH.code.size + noffH.initData.size + noffH.uninitData.size + UserStackSize;  // we need to increase the size
+    size = noffH.code.size + noffH.initData.size + noffH.uninitData.size + UserStackSize + UserHeapSize ;  // we need to increase the size
                            // to leave room for the stack
+    //setting the heapStartAddress and brk
+    //InitHeap();
+    
     numPages = divRoundUp(size, PageSize);
     size = numPages * PageSize;
 
@@ -189,9 +192,13 @@ AddrSpace::AddrSpace(char *fileName) {
     processExecutable = executable;
     noffHeader = noffH;
     kernel->addrLock->V();
-   // delete executable;
+
+    //set the heap starting address
+    brk = divRoundUp(noffH.code.size + noffH.initData.size + noffH.uninitData.size,PageSize) * PageSize;
+    // delete executable;
     return;
 }
+
 
 
 //---------------------------------------------------------------------
@@ -209,7 +216,7 @@ void AddrSpace::LoadPage(int vaddr) {
 //    	cerr << "Checking vaddr=" << vaddr << endl;
 //	cerr << "readonlyData: virtualAddr=" << noffHeader.readonlyData.virtualAddr
 //	     << " size=" << noffHeader.readonlyData.size << endl;
-	cout<<"[Page Fault] Occured at the virtual page "<<vpn<<" and at the virtual address "<<vaddr<<endl;
+	//cout<<"[Page Fault] Occured at the virtual page "<<vpn<<" and at the virtual address "<<vaddr<<endl;
 	kernel->stats->numPageFaults++;
 	int page = kernel->gPhysPageBitMap->FindAndSet();
 	if(page==-1){
@@ -242,6 +249,26 @@ void AddrSpace::LoadPage(int vaddr) {
 	//uninitData: C standard guarantees uninitialized globals are zero — bzero handles it
 	//stack: runtime data, does not exist in executable file — bzero handles it
 	return ;
+}
+
+//----------------------------------------------------------------------
+// AddrSpace::Sbrk()
+// 	given the number of bytes it will move the heap top
+//----------------------------------------------------------------------
+
+int AddrSpace::Sbrk(int bytes){
+	int old_brk = brk;
+	cout<<"Called Sbrk"<<endl;
+	int stackBottom = numPages * PageSize - UserStackSize;
+	cout<<"Stack Bottom: "<<stackBottom<<endl;
+	cout<<"Heap top: "<<old_brk + bytes<<endl;
+	if(old_brk + bytes > stackBottom){
+		cout<<"Heap pages are flowing into the stack pages"<<endl;
+		cout<<"Cannot allocate the memory"<<endl;
+		return -1;
+	}
+	brk += bytes;
+	return old_brk;
 }
 
 //----------------------------------------------------------------------
@@ -298,6 +325,7 @@ void AddrSpace::InitRegisters() {
     machine->WriteRegister(StackReg, numPages * PageSize - 16);
     DEBUG(dbgAddr, "Initializing stack pointer: " << numPages * PageSize - 16);
 }
+
 
 //----------------------------------------------------------------------
 // AddrSpace::SaveState

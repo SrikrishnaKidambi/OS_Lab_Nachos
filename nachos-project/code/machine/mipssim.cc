@@ -661,6 +661,7 @@ void Machine::OneInstruction(Instruction *instr) {
 
         case OP_RES:
         case OP_UNIMP:
+	    //cout<<"Printing the instr that caused exception:"<< instr->opCode<<endl;
             RaiseException(IllegalInstrException, 0);
             return;
 

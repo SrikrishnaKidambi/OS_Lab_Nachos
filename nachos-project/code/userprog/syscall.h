@@ -58,6 +58,7 @@
 #define SC_CloseFd 61
 #define SC_ExecChild 62
 #define SC_GetChildRd 63
+#define SC_Sbrk 64
 //------------
 
 #ifndef IN_ASM
@@ -99,6 +100,7 @@ void ReadString(char *buffer, int length);
 
 void PrintString(char *buffer);
 
+int Sbrk(int bytes);
 /* Address space control operations: Exit, Exec, Execv, and Join */
 
 /* This user program is done (status = 0 means exited normally). */

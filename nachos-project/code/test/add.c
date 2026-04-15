@@ -12,6 +12,7 @@ int main() {
 
     result = Add(42, 23);
     //PrintString("The addition result is: ");
+    PrintString("Krishna");
     PrintNum(result);
     //PrintString("\n");
     //Halt();

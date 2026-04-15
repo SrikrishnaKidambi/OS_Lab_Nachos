@@ -19,6 +19,7 @@
 #include "fileDescriptor.h"
 
 #define UserStackSize 1024  // increase this as necessary!
+#define UserHeapSize 4096 //increase this as necessary!
 
 class AddrSpace {
    public:
@@ -30,15 +31,15 @@ class AddrSpace {
     void Execute();  // Run a program
                      // assumes the program has already
                      // been loaded
-
     void SaveState();     // Save/restore address space-specific
     void RestoreState();  // info on a context switch
-    
+ 
     OpenFile *processExecutable;
     NoffHeader noffHeader;
     // Translate virtual address _vaddr_
     // to physical address _paddr_. _mode_
     // is 0 for Read, 1 for Write.
+    
     
     TranslationEntry *pageTable;  // Assume linear page table translation
                                   // for now!
@@ -48,6 +49,12 @@ class AddrSpace {
     
     //declaration for LoadPage method
     void LoadPage(int vaddr);
+
+    //heap addr start
+    int brk;
+
+    //sbrk function which moves the stack top
+    int Sbrk(int bytes);
    private:
     unsigned int numPages;        // Number of pages in the virtual
                                   // address space
