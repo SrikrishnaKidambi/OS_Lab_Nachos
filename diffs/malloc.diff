@@ -1,0 +1,482 @@
+diff --git a/nachos-project/code/build.linux/Makefile b/nachos-project/code/build.linux/Makefile
+index 3c7aa0e..1bb2ef5 100755
+--- a/nachos-project/code/build.linux/Makefile
++++ b/nachos-project/code/build.linux/Makefile
+@@ -295,11 +295,11 @@ THREAD_O = alarm.o kernel.o main.o scheduler.o synch.o thread.o ptable.o pcb.o s
+ USERPROG_H = ../userprog/addrspace.h\
+ 	../userprog/syscall.h\
+ 	../userprog/synchconsole.h\
+-	../userprog/noff.h
++	../userprog/noff.h\
+ 
+ USERPROG_C = ../userprog/addrspace.cc\
+ 	../userprog/exception.cc\
+-	../userprog/synchconsole.cc
++	../userprog/synchconsole.cc\
+ 
+ USERPROG_O = addrspace.o exception.o synchconsole.o
+ 
+diff --git a/nachos-project/code/machine/mipssim.cc b/nachos-project/code/machine/mipssim.cc
+index 20edd33..6d74ecf 100755
+--- a/nachos-project/code/machine/mipssim.cc
++++ b/nachos-project/code/machine/mipssim.cc
+@@ -661,6 +661,7 @@ void Machine::OneInstruction(Instruction *instr) {
+ 
+         case OP_RES:
+         case OP_UNIMP:
++	    //cout<<"Printing the instr that caused exception:"<< instr->opCode<<endl;
+             RaiseException(IllegalInstrException, 0);
+             return;
+ 
+diff --git a/nachos-project/code/test/Makefile b/nachos-project/code/test/Makefile
+index b219860..25cbde7 100755
+--- a/nachos-project/code/test/Makefile
++++ b/nachos-project/code/test/Makefile
+@@ -112,7 +112,7 @@ ifeq ($(hosttype),unknown)
+ PROGRAMS = unknownhost
+ else
+ # change this if you create a new test program!
+-PROGRAMS = demandPaging1 demandPaging2 pipeAdd pipeAbs pipeTestChild pipeTest printReader printWriter sleepTest prioritySchedulerTest priority1 priority2 priority3 child abs add halt shell matmult sort segments test_syscall num_io char_io random str_io ascii bubblesort help create_file open_file readwrite exec test_sem sinhvien voinuoc main
++PROGRAMS = mallocTest2 mallocTest1 mallocTest demandPaging1 demandPaging2 pipeAdd pipeAbs pipeTestChild pipeTest printReader printWriter sleepTest prioritySchedulerTest priority1 priority2 priority3 child abs add halt shell matmult sort segments test_syscall num_io char_io random str_io ascii bubblesort help create_file open_file readwrite exec test_sem sinhvien voinuoc main
+ endif
+ 
+ all: $(PROGRAMS)
+@@ -140,6 +140,29 @@ sleepTest: sleepTest.o start.o
+ 	$(LD) $(LDFLAGS) start.o sleepTest.o -o sleepTest.coff
+ 	$(COFF2NOFF) sleepTest.coff sleepTest
+ 
++mallocTest.o: mallocTest.c malloc.h
++	$(CC) $(CFLAGS) -c mallocTest.c
++
++mallocTest1.o: mallocTest1.c malloc.h
++	$(CC) $(CFLAGS) -c mallocTest1.c
++
++mallocTest2.o: mallocTest2.c malloc.h
++	$(CC) $(CFLAGS) -c mallocTest2.c
++
++malloc.o: malloc.c malloc.h
++	$(CC) $(CFLAGS) -c malloc.c
++
++mallocTest: mallocTest.o malloc.o start.o
++	$(LD) $(LDFLAGS) start.o malloc.o mallocTest.o -o mallocTest.coff
++	$(COFF2NOFF) mallocTest.coff mallocTest
++
++mallocTest1: mallocTest1.o malloc.o start.o
++	$(LD) $(LDFLAGS) start.o malloc.o mallocTest1.o -o mallocTest1.coff
++	$(COFF2NOFF) mallocTest1.coff mallocTest1
++
++mallocTest2: mallocTest2.o malloc.o start.o
++	$(LD) $(LDFLAGS) start.o malloc.o mallocTest2.o -o mallocTest2.coff
++	$(COFF2NOFF) mallocTest2.coff mallocTest2
+ priority1.o: priority1.c
+ 	$(CC) $(CFLAGS) -c priority1.c
+ priority1: priority1.o start.o
+diff --git a/nachos-project/code/test/add.c b/nachos-project/code/test/add.c
+index 14122dc..c8438a4 100755
+--- a/nachos-project/code/test/add.c
++++ b/nachos-project/code/test/add.c
+@@ -12,6 +12,7 @@ int main() {
+ 
+     result = Add(42, 23);
+     //PrintString("The addition result is: ");
++    PrintString("Krishna");
+     PrintNum(result);
+     //PrintString("\n");
+     //Halt();
+diff --git a/nachos-project/code/test/malloc.c b/nachos-project/code/test/malloc.c
+new file mode 100644
+index 0000000..2b0eb40
+--- /dev/null
++++ b/nachos-project/code/test/malloc.c
+@@ -0,0 +1,72 @@
++#include "syscall.h"
++#include "malloc.h"
++
++Blk_Metadata* heapTop = NULL;
++Blk_Metadata* heapStart = NULL;
++
++void* Malloc(int bytes){
++	Blk_Metadata* block = NULL;
++	Blk_Metadata* curr = heapStart;
++	//Blk_Metadata* prev = NULL;
++	int heapAddr;
++	//if no memory needed bytes = 0 then return
++	if(bytes == 0) return NULL;
++	//check if we can get a block from free list
++	while(curr!=NULL){
++		if(curr->in_use == 0 && curr->blk_size >= bytes){
++			curr->in_use = 1;
++			//if(prev == NULL){
++			//	freeList = curr->n_fblk;
++			//}
++			//else{
++			//	prev->n_fblk = curr->n_fblk;
++			//}
++			//curr->n_fblk = NULL;
++			return (void*)(curr + 1);
++		}
++		//prev = curr;
++		curr = curr->n_blk;
++	}
++
++	//if no free available then call sbrk
++	heapAddr = Sbrk(bytes + sizeof(Blk_Metadata));
++	if(heapAddr == -1){
++		return NULL;
++	}
++	block = (Blk_Metadata*)heapAddr;
++	block->p_blk = heapTop;
++	block->n_blk = NULL;
++	block->blk_size = bytes;
++	block->in_use = 1;
++
++	if(heapTop != NULL){
++		block->p_blk->n_blk = block;
++	}
++	if(heapStart == NULL){
++		heapStart = block;
++	}
++	heapTop = block;
++	return (void*)(block + 1); //returning starting addr of data
++}
++
++void Free(void* ptr){
++	Blk_Metadata* f_blk = NULL;
++	if(ptr == NULL) return;
++	f_blk = (Blk_Metadata*)((char*)ptr - sizeof(Blk_Metadata));
++	//Blk_Metadata* curr = freeList;
++	f_blk->in_use = 0;
++	//f_blk->n_fblk = NULL;
++	//if(freeList == NULL){
++	//	freeList = f_blk;
++	//	return;
++	//}
++	
++	//while(curr->n_fblk != NULL){
++	//	curr = curr->n_fblk;
++	//}
++	
++	//curr->n_fblk = f_blk;
++	//f_blk->n_fblk = NULL;
++	return;
++}
++
+diff --git a/nachos-project/code/test/mallocTest.c b/nachos-project/code/test/mallocTest.c
+new file mode 100644
+index 0000000..9df5f9b
+--- /dev/null
++++ b/nachos-project/code/test/mallocTest.c
+@@ -0,0 +1,53 @@
++#include "syscall.h"
++#include "malloc.h"
++
++int main(){
++    void* ptr1;
++    void* ptr2;
++    void* a;
++    void* b;
++    void* c;
++    void* big;
++    int* arr;
++    void* newPtr;
++
++    // Test 1: basic malloc
++    ptr1 = Malloc(100);
++    if(ptr1 != 0){
++	    PrintString("T1:OK\n");
++    }
++    else PrintString("T1:NO\n");
++
++  //  Test 2: read/write
++    arr = (int*)Malloc(10 * sizeof(int));
++    arr[0] = 42;
++    arr[9] = 34;
++    if(arr[0] == 42 && arr[9] == 34) PrintString("T2:OK\n");
++    else PrintString("T2:NO\n");
++
++    // Test 3: free and reuse
++    Free(ptr1);
++    ptr2 = Malloc(100);
++    if(ptr1 == ptr2) PrintString("T3:OK\n");
++    else PrintString("T3:NO\n");
++
++    // Test 4: unique addresses
++    a = Malloc(50);
++    b = Malloc(50);
++    c = Malloc(50);
++    if(a != b && b != c && a != c) PrintString("T4:OK\n");
++    else PrintString("T4:NO\n");
++
++    // Test 5: overflow
++    big = Malloc(5000);
++    if(big == 0) PrintString("T5:OK\n");
++    else PrintString("T5:NO\n");
++
++    // Test 6: free last block
++    Free(c);
++    newPtr = Malloc(50);
++    if(newPtr == c) PrintString("T6:OK\n");
++    else PrintString("T6:NO\n");
++
++    return 0;
++}
+diff --git a/nachos-project/code/test/mallocTest1.c b/nachos-project/code/test/mallocTest1.c
+new file mode 100644
+index 0000000..6871cff
+--- /dev/null
++++ b/nachos-project/code/test/mallocTest1.c
+@@ -0,0 +1,34 @@
++#include "syscall.h"
++#include "malloc.h"
++
++int main(){
++	int* a = NULL;
++	int* b = NULL;
++	int* c = NULL;
++	a = (int*)Malloc(4);
++	*a = 5;
++	PrintNum(*a);
++	//PrintString("\n");
++	//PrintString("Succes\n");
++
++	Free(a);
++	//PrintString("Free OK\n");
++
++	b = (int*)Malloc(10);
++	*b = 10;
++	PrintNum(*b);
++	//PrintString("\n");
++	//PrintString("Success\n");
++
++	//if(a==b){
++	//	PrintString("Same Alloction\n");
++	//}else{
++	//	PrintString("Wrong \n");
++	//}
++
++	Free(b);
++	//freeing b
++	c = (int*)Malloc(5000);
++	PrintNum((int)c);
++	Halt();
++}
+diff --git a/nachos-project/code/test/mallocTest2.c b/nachos-project/code/test/mallocTest2.c
+new file mode 100644
+index 0000000..bd0580a
+--- /dev/null
++++ b/nachos-project/code/test/mallocTest2.c
+@@ -0,0 +1,24 @@
++#include "syscall.h"
++#include "malloc.h"
++
++void alloc(int** a){
++	*a = Malloc(4);
++	**a = 10;
++	PrintNum(**a);
++	//PrintString("\n");
++	//PrintString("SIF\n");
++	return ;
++}
++
++int main(){
++	int* a = NULL;
++	alloc(&a);
++	if(a==NULL){
++		PrintString("a is null\n");
++		return 0;
++	}
++	PrintNum(*a);
++	//PrintString("\n");
++	//PrintString("SOF\n");
++	Halt();
++}
+diff --git a/nachos-project/code/userprog/addrspace.cc b/nachos-project/code/userprog/addrspace.cc
+index 4aed2b5..14cc762 100755
+--- a/nachos-project/code/userprog/addrspace.cc
++++ b/nachos-project/code/userprog/addrspace.cc
+@@ -127,8 +127,11 @@ AddrSpace::AddrSpace(char *fileName) {
+     ASSERT(noffH.noffMagic == NOFFMAGIC);
+     kernel->addrLock->P();
+     // how big is address space?
+-    size = noffH.code.size + noffH.initData.size + noffH.uninitData.size + UserStackSize;  // we need to increase the size
++    size = noffH.code.size + noffH.initData.size + noffH.uninitData.size + UserStackSize + UserHeapSize ;  // we need to increase the size
+                            // to leave room for the stack
++    //setting the heapStartAddress and brk
++    //InitHeap();
++    
+     numPages = divRoundUp(size, PageSize);
+     size = numPages * PageSize;
+ 
+@@ -189,11 +192,15 @@ AddrSpace::AddrSpace(char *fileName) {
+     processExecutable = executable;
+     noffHeader = noffH;
+     kernel->addrLock->V();
+-   // delete executable;
++
++    //set the heap starting address
++    brk = divRoundUp(noffH.code.size + noffH.initData.size + noffH.uninitData.size,PageSize) * PageSize;
++    // delete executable;
+     return;
+ }
+ 
+ 
++
+ //---------------------------------------------------------------------
+ //AddrSpace::LoadPage
+ //	Load the page when a page fault occurs
+@@ -209,7 +216,7 @@ void AddrSpace::LoadPage(int vaddr) {
+ //    	cerr << "Checking vaddr=" << vaddr << endl;
+ //	cerr << "readonlyData: virtualAddr=" << noffHeader.readonlyData.virtualAddr
+ //	     << " size=" << noffHeader.readonlyData.size << endl;
+-	cout<<"[Page Fault] Occured at the virtual page "<<vpn<<" and at the virtual address "<<vaddr<<endl;
++	//cout<<"[Page Fault] Occured at the virtual page "<<vpn<<" and at the virtual address "<<vaddr<<endl;
+ 	kernel->stats->numPageFaults++;
+ 	int page = kernel->gPhysPageBitMap->FindAndSet();
+ 	if(page==-1){
+@@ -244,6 +251,26 @@ void AddrSpace::LoadPage(int vaddr) {
+ 	return ;
+ }
+ 
++//----------------------------------------------------------------------
++// AddrSpace::Sbrk()
++// 	given the number of bytes it will move the heap top
++//----------------------------------------------------------------------
++
++int AddrSpace::Sbrk(int bytes){
++	int old_brk = brk;
++	cout<<"Called Sbrk"<<endl;
++	int stackBottom = numPages * PageSize - UserStackSize;
++	cout<<"Stack Bottom: "<<stackBottom<<endl;
++	cout<<"Heap top: "<<old_brk + bytes<<endl;
++	if(old_brk + bytes > stackBottom){
++		cout<<"Heap pages are flowing into the stack pages"<<endl;
++		cout<<"Cannot allocate the memory"<<endl;
++		return -1;
++	}
++	brk += bytes;
++	return old_brk;
++}
++
+ //----------------------------------------------------------------------
+ // AddrSpace::Execute
+ // 	Run a user program using the current thread
+@@ -299,6 +326,7 @@ void AddrSpace::InitRegisters() {
+     DEBUG(dbgAddr, "Initializing stack pointer: " << numPages * PageSize - 16);
+ }
+ 
++
+ //----------------------------------------------------------------------
+ // AddrSpace::SaveState
+ // 	On a context switch, save any machine state, specific
+diff --git a/nachos-project/code/userprog/addrspace.h b/nachos-project/code/userprog/addrspace.h
+index 00d2781..57a453c 100755
+--- a/nachos-project/code/userprog/addrspace.h
++++ b/nachos-project/code/userprog/addrspace.h
+@@ -19,6 +19,7 @@
+ #include "fileDescriptor.h"
+ 
+ #define UserStackSize 1024  // increase this as necessary!
++#define UserHeapSize 4096 //increase this as necessary!
+ 
+ class AddrSpace {
+    public:
+@@ -30,16 +31,16 @@ class AddrSpace {
+     void Execute();  // Run a program
+                      // assumes the program has already
+                      // been loaded
+-
+     void SaveState();     // Save/restore address space-specific
+     void RestoreState();  // info on a context switch
+-    
++ 
+     OpenFile *processExecutable;
+     NoffHeader noffHeader;
+     // Translate virtual address _vaddr_
+     // to physical address _paddr_. _mode_
+     // is 0 for Read, 1 for Write.
+     
++    
+     TranslationEntry *pageTable;  // Assume linear page table translation
+                                   // for now!
+     
+@@ -48,6 +49,12 @@ class AddrSpace {
+     
+     //declaration for LoadPage method
+     void LoadPage(int vaddr);
++
++    //heap addr start
++    int brk;
++
++    //sbrk function which moves the stack top
++    int Sbrk(int bytes);
+    private:
+     unsigned int numPages;        // Number of pages in the virtual
+                                   // address space
+diff --git a/nachos-project/code/userprog/exception.cc b/nachos-project/code/userprog/exception.cc
+index 085c511..8b5d7c3 100755
+--- a/nachos-project/code/userprog/exception.cc
++++ b/nachos-project/code/userprog/exception.cc
+@@ -446,6 +446,13 @@ void handle_SC_Sleep() {
+     return move_program_counter();
+ }
+ 
++void handle_SC_Sbrk() {
++   int bytes = kernel->machine->ReadRegister(4);
++   int userVAddr = kernel->currentThread->space->Sbrk(bytes);
++   kernel->machine->WriteRegister(2,userVAddr);
++   return move_program_counter();
++}
++
+ void handle_SC_Pipe() {
+    int rd = kernel->machine->ReadRegister(4);
+    int wd = kernel->machine->ReadRegister(5);
+@@ -599,6 +606,8 @@ void ExceptionHandler(ExceptionType which) {
+             switch (type) {
+                 case SC_Halt:
+                     return handle_SC_Halt();
++		case SC_Sbrk:
++		    return handle_SC_Sbrk();
+ 		case SC_Abs:
+ 		    return handle_SC_Abs();
+ 		case SC_Sleep:
+diff --git a/nachos-project/code/userprog/syscall.h b/nachos-project/code/userprog/syscall.h
+index 52dfb54..20613e2 100755
+--- a/nachos-project/code/userprog/syscall.h
++++ b/nachos-project/code/userprog/syscall.h
+@@ -58,6 +58,7 @@
+ #define SC_CloseFd 61
+ #define SC_ExecChild 62
+ #define SC_GetChildRd 63
++#define SC_Sbrk 64
+ //------------
+ 
+ #ifndef IN_ASM
+@@ -99,6 +100,7 @@ void ReadString(char *buffer, int length);
+ 
+ void PrintString(char *buffer);
+ 
++int Sbrk(int bytes);
+ /* Address space control operations: Exit, Exec, Execv, and Join */
+ 
+ /* This user program is done (status = 0 means exited normally). */
+diff --git a/notes/malloc_notes b/notes/malloc_notes
+new file mode 100644
+index 0000000..0c00dba
+--- /dev/null
++++ b/notes/malloc_notes
+@@ -0,0 +1,15 @@
++void * my_malloc(unsigned int bytes) - handle using brk
++void * my_free - store free blocks and say we are requested 20 bytes and use the 24bytes beginning 4 bytes use for meta data
++
++Why void pointer? - Can typecast to other pointers
++
++c = (char *) my_malloc(a
++
++void * b; - size is 4 bytes
++
++Q) How much does b++ move if b is  a void pointer?
++
++
++blk_metadata -> p_blk, n_blk, size
++
++
