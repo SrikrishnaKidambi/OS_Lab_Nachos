@@ -48,6 +48,6 @@ int main(){
     newPtr = Malloc(50);
     if(newPtr == c) PrintString("T6:OK\n");
     else PrintString("T6:NO\n");
-
-    return 0;
+    Halt();
+    //return 0;
 }

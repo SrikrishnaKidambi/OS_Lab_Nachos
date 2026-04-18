@@ -15,7 +15,7 @@ int main(){
         userbuf	= "hello world";
         res1 = WriteFFd(wd,userbuf,11);
 	if(res1==-1){
-		PrintString("Write failed\n");
+//		PrintString("Write failed\n");
 		Halt();
 	}
 	child = ExecChild("../test/pipeTestChild",15,"Child",rd);

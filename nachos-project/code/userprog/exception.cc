@@ -65,12 +65,7 @@ char* stringUser2System(int addr, int convert_length = -1) {
     //as we are doing this in kernel space PageFaultException is not triggered in kernel mode so that we need to manually check and load.
     do {
         int oneChar;
-//	int vpn = (addr + length) / PageSize;
-//	if(kernel->currentThread->space->pageTable[vpn].valid==FALSE){
-//		kernel->stats->numPageFaults++;
-//		kernel->currentThread->space->LoadPage(addr+length,vpn);
-//	}
-        kernel->machine->ReadMem(addr + length, 1, &oneChar);
+	while(!kernel->machine->ReadMem(addr + length, 1, &oneChar));
         length++;
         // if convert_length == -1, we use '\0' to terminate the process
         // otherwise, we use convert_length to terminate the process
@@ -81,12 +76,7 @@ char* stringUser2System(int addr, int convert_length = -1) {
     str = new char[length];
     for (int i = 0; i < length; i++) {
         int oneChar;
-//	int vpn = (addr + i) / PageSize;
-//	if(kernel->currentThread->space->pageTable[vpn].valid==FALSE){
-//		kernel->stats->numPageFaults++;
-//		kernel->currentThread->space->LoadPage(addr+i,vpn);
-//	}
-        kernel->machine->ReadMem(addr + i, 1,&oneChar);  // copy characters to kernel space
+	while(!kernel->machine->ReadMem(addr + i, 1,&oneChar)); // copy characters to kernel space
         str[i] = (unsigned char)oneChar;
     }
   //  cerr << "length in stringUser2System = " << length << endl;
@@ -105,10 +95,9 @@ char* stringUser2System(int addr, int convert_length = -1) {
 void StringSys2User(char* str, int addr, int convert_length = -1) {
     int length = (convert_length == -1 ? strlen(str) : convert_length);
     for (int i = 0; i < length; i++) {
-        kernel->machine->WriteMem(addr + i, 1,
-                                  str[i]);  // copy characters to user space
+        while(!kernel->machine->WriteMem(addr + i, 1, str[i]));  // copy characters to user space
     }
-    kernel->machine->WriteMem(addr + length, 1, '\0');
+    while(!kernel->machine->WriteMem(addr + length, 1, '\0'));
 }
 
 /**

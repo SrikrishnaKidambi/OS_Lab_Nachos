@@ -14,7 +14,7 @@ int main(){
         res2 = WriteFFd(wd,(char *)&result,sizeof(int));
 
         if(res2 == -1){
-                PrintString("WriteFailed\n");
+//                PrintString("WriteFailed\n");
                 Halt();
         }
 

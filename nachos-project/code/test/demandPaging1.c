@@ -7,12 +7,12 @@ int main(){
 	int COLS = 30;
 	int i = 0;
 	int j = 0;
-	PrintString("Hello\n");
+	//PrintString("Hello\n");
 	for(i=0;i<ROWS;i++){
 		for(j=0;j<COLS;j++){
 			arr[i][j]=1;
 		}
 	}
-	PrintString("Done with dtest1\n");
+	//PrintString("Done with dtest1\n");
 	Halt();
 }

@@ -15,8 +15,8 @@ int main(){
 			userbuf[i]= userbuf[i] - 32;
 		}
 	}
-	PrintString(userbuf);
-	PrintString("\n");
+	//PrintString(userbuf);
+	//PrintString("\n");
 
 	Exit(0);
 }

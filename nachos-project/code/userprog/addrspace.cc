@@ -216,7 +216,7 @@ void AddrSpace::LoadPage(int vaddr) {
 //    	cerr << "Checking vaddr=" << vaddr << endl;
 //	cerr << "readonlyData: virtualAddr=" << noffHeader.readonlyData.virtualAddr
 //	     << " size=" << noffHeader.readonlyData.size << endl;
-	//cout<<"[Page Fault] Occured at the virtual page "<<vpn<<" and at the virtual address "<<vaddr<<endl;
+	cout<<"[Page Fault] Occured at the virtual page "<<vpn<<" and at the virtual address "<<vaddr<<endl;
 	kernel->stats->numPageFaults++;
 	int page = kernel->gPhysPageBitMap->FindAndSet();
 	if(page==-1){
@@ -238,12 +238,12 @@ void AddrSpace::LoadPage(int vaddr) {
 		processExecutable->ReadAt(&(kernel->machine->mainMemory[pageTable[vpn].physicalPage * PageSize]), PageSize, noffHeader.initData.inFileAddr + (initDatapn * PageSize));
 	}
 	//for read only data
-	#ifdef RDATA
-	else if(vaddr >= noffHeader.readonlyData.virtualAddr && vaddr < noffHeader.readonlyData.virtualAddr + noffHeader.readonlyData.size){
-		unsigned int rdatapn = (vaddr - noffHeader.readonlyData.virtualAddr) / PageSize;
-		processExecutable->ReadAt(&(kernel->machine->mainMemory[pageTable[vpn].physicalPage * PageSize]), PageSize, noffHeader.readonlyData.inFileAddr + (rdatapn * PageSize));
-	}
-	#endif
+	//#ifdef RDATA
+	//else if(vaddr >= noffHeader.readonlyData.virtualAddr && vaddr < noffHeader.readonlyData.virtualAddr + noffHeader.readonlyData.size){
+	//	unsigned int rdatapn = (vaddr - noffHeader.readonlyData.virtualAddr) / PageSize;
+	//	processExecutable->ReadAt(&(kernel->machine->mainMemory[pageTable[vpn].physicalPage * PageSize]), PageSize, noffHeader.readonlyData.inFileAddr + (rdatapn * PageSize));
+	//}
+	//#endif
 
 	//uninitData and stack pages do not need ReadAt from executable
 	//uninitData: C standard guarantees uninitialized globals are zero — bzero handles it
