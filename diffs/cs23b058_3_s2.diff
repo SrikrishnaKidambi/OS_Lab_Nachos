@@ -1,0 +1,205 @@
+diff --git a/nachos-project/code/test/add.c b/nachos-project/code/test/add.c
+index c8438a4..e0bff93 100755
+--- a/nachos-project/code/test/add.c
++++ b/nachos-project/code/test/add.c
+@@ -11,10 +11,10 @@ int main() {
+     int result;
+ 
+     result = Add(42, 23);
+-    //PrintString("The addition result is: ");
+-    PrintString("Krishna");
++    PrintString("The addition result is: ");
++    //PrintString("Krishna");
+     PrintNum(result);
+-    //PrintString("\n");
+-    //Halt();
++    PrintString("\n");
++    Halt();
+     /* not reached */
+ }
+diff --git a/nachos-project/code/test/demandPaging1.c b/nachos-project/code/test/demandPaging1.c
+index cd8cdfe..564a708 100644
+--- a/nachos-project/code/test/demandPaging1.c
++++ b/nachos-project/code/test/demandPaging1.c
+@@ -7,12 +7,12 @@ int main(){
+ 	int COLS = 30;
+ 	int i = 0;
+ 	int j = 0;
+-	PrintString("Hello\n");
++	//PrintString("Hello\n");
+ 	for(i=0;i<ROWS;i++){
+ 		for(j=0;j<COLS;j++){
+ 			arr[i][j]=1;
+ 		}
+ 	}
+-	PrintString("Done with dtest1\n");
++	//PrintString("Done with dtest1\n");
+ 	Halt();
+ }
+diff --git a/nachos-project/code/test/mallocTest.c b/nachos-project/code/test/mallocTest.c
+index 9df5f9b..a27a8d1 100644
+--- a/nachos-project/code/test/mallocTest.c
++++ b/nachos-project/code/test/mallocTest.c
+@@ -48,6 +48,6 @@ int main(){
+     newPtr = Malloc(50);
+     if(newPtr == c) PrintString("T6:OK\n");
+     else PrintString("T6:NO\n");
+-
+-    return 0;
++    Halt();
++    //return 0;
+ }
+diff --git a/nachos-project/code/test/mallocTest1.c b/nachos-project/code/test/mallocTest1.c
+index 6871cff..6de3a1d 100644
+--- a/nachos-project/code/test/mallocTest1.c
++++ b/nachos-project/code/test/mallocTest1.c
+@@ -14,7 +14,7 @@ int main(){
+ 	Free(a);
+ 	//PrintString("Free OK\n");
+ 
+-	b = (int*)Malloc(10);
++	b = (int*)Malloc(4);
+ 	*b = 10;
+ 	PrintNum(*b);
+ 	//PrintString("\n");
+diff --git a/nachos-project/code/test/pipeAbs.c b/nachos-project/code/test/pipeAbs.c
+index 9648182..03973a1 100644
+--- a/nachos-project/code/test/pipeAbs.c
++++ b/nachos-project/code/test/pipeAbs.c
+@@ -9,15 +9,15 @@ int main(){
+         int res1 = ReadFFd(rd,(char*)&number,sizeof(int));
+ 
+         if(res1 == -1){
+-                PrintString("Read failed\n");
++  //              PrintString("Read failed\n");
+                 Halt();
+         }
+ 
+         result = Abs(number);
+ 
+-        PrintString("The absolute value of addition is: ");
++ //       PrintString("The absolute value of addition is: ");
+         PrintNum(result);
+-        PrintString("\n");
++//        PrintString("\n");
+ 
+         Exit(0);
+ }
+diff --git a/nachos-project/code/test/pipeAdd.c b/nachos-project/code/test/pipeAdd.c
+index 0973094..6e47a86 100644
+--- a/nachos-project/code/test/pipeAdd.c
++++ b/nachos-project/code/test/pipeAdd.c
+@@ -14,7 +14,7 @@ int main(){
+         res2 = WriteFFd(wd,(char *)&result,sizeof(int));
+ 
+         if(res2 == -1){
+-                PrintString("WriteFailed\n");
++//                PrintString("WriteFailed\n");
+                 Halt();
+         }
+ 
+diff --git a/nachos-project/code/test/pipeTest.c b/nachos-project/code/test/pipeTest.c
+index e41b5e2..ba70e69 100644
+--- a/nachos-project/code/test/pipeTest.c
++++ b/nachos-project/code/test/pipeTest.c
+@@ -15,7 +15,7 @@ int main(){
+         userbuf	= "hello world";
+         res1 = WriteFFd(wd,userbuf,11);
+ 	if(res1==-1){
+-		PrintString("Write failed\n");
++//		PrintString("Write failed\n");
+ 		Halt();
+ 	}
+ 	child = ExecChild("../test/pipeTestChild",15,"Child",rd);
+diff --git a/nachos-project/code/test/pipeTestChild.c b/nachos-project/code/test/pipeTestChild.c
+index f2aea18..97bf750 100644
+--- a/nachos-project/code/test/pipeTestChild.c
++++ b/nachos-project/code/test/pipeTestChild.c
+@@ -15,8 +15,8 @@ int main(){
+ 			userbuf[i]= userbuf[i] - 32;
+ 		}
+ 	}
+-	PrintString(userbuf);
+-	PrintString("\n");
++	//PrintString(userbuf);
++	//PrintString("\n");
+ 
+ 	Exit(0);
+ }
+diff --git a/nachos-project/code/userprog/addrspace.cc b/nachos-project/code/userprog/addrspace.cc
+index 14cc762..4c06861 100755
+--- a/nachos-project/code/userprog/addrspace.cc
++++ b/nachos-project/code/userprog/addrspace.cc
+@@ -216,7 +216,7 @@ void AddrSpace::LoadPage(int vaddr) {
+ //    	cerr << "Checking vaddr=" << vaddr << endl;
+ //	cerr << "readonlyData: virtualAddr=" << noffHeader.readonlyData.virtualAddr
+ //	     << " size=" << noffHeader.readonlyData.size << endl;
+-	//cout<<"[Page Fault] Occured at the virtual page "<<vpn<<" and at the virtual address "<<vaddr<<endl;
++	cout<<"[Page Fault] Occured at the virtual page "<<vpn<<" and at the virtual address "<<vaddr<<endl;
+ 	kernel->stats->numPageFaults++;
+ 	int page = kernel->gPhysPageBitMap->FindAndSet();
+ 	if(page==-1){
+@@ -238,12 +238,12 @@ void AddrSpace::LoadPage(int vaddr) {
+ 		processExecutable->ReadAt(&(kernel->machine->mainMemory[pageTable[vpn].physicalPage * PageSize]), PageSize, noffHeader.initData.inFileAddr + (initDatapn * PageSize));
+ 	}
+ 	//for read only data
+-	#ifdef RDATA
+-	else if(vaddr >= noffHeader.readonlyData.virtualAddr && vaddr < noffHeader.readonlyData.virtualAddr + noffHeader.readonlyData.size){
+-		unsigned int rdatapn = (vaddr - noffHeader.readonlyData.virtualAddr) / PageSize;
+-		processExecutable->ReadAt(&(kernel->machine->mainMemory[pageTable[vpn].physicalPage * PageSize]), PageSize, noffHeader.readonlyData.inFileAddr + (rdatapn * PageSize));
+-	}
+-	#endif
++	//#ifdef RDATA
++	//else if(vaddr >= noffHeader.readonlyData.virtualAddr && vaddr < noffHeader.readonlyData.virtualAddr + noffHeader.readonlyData.size){
++	//	unsigned int rdatapn = (vaddr - noffHeader.readonlyData.virtualAddr) / PageSize;
++	//	processExecutable->ReadAt(&(kernel->machine->mainMemory[pageTable[vpn].physicalPage * PageSize]), PageSize, noffHeader.readonlyData.inFileAddr + (rdatapn * PageSize));
++	//}
++	//#endif
+ 
+ 	//uninitData and stack pages do not need ReadAt from executable
+ 	//uninitData: C standard guarantees uninitialized globals are zero — bzero handles it
+diff --git a/nachos-project/code/userprog/exception.cc b/nachos-project/code/userprog/exception.cc
+index 8b5d7c3..88dbb23 100755
+--- a/nachos-project/code/userprog/exception.cc
++++ b/nachos-project/code/userprog/exception.cc
+@@ -65,12 +65,7 @@ char* stringUser2System(int addr, int convert_length = -1) {
+     //as we are doing this in kernel space PageFaultException is not triggered in kernel mode so that we need to manually check and load.
+     do {
+         int oneChar;
+-//	int vpn = (addr + length) / PageSize;
+-//	if(kernel->currentThread->space->pageTable[vpn].valid==FALSE){
+-//		kernel->stats->numPageFaults++;
+-//		kernel->currentThread->space->LoadPage(addr+length,vpn);
+-//	}
+-        kernel->machine->ReadMem(addr + length, 1, &oneChar);
++	while(!kernel->machine->ReadMem(addr + length, 1, &oneChar));
+         length++;
+         // if convert_length == -1, we use '\0' to terminate the process
+         // otherwise, we use convert_length to terminate the process
+@@ -81,12 +76,7 @@ char* stringUser2System(int addr, int convert_length = -1) {
+     str = new char[length];
+     for (int i = 0; i < length; i++) {
+         int oneChar;
+-//	int vpn = (addr + i) / PageSize;
+-//	if(kernel->currentThread->space->pageTable[vpn].valid==FALSE){
+-//		kernel->stats->numPageFaults++;
+-//		kernel->currentThread->space->LoadPage(addr+i,vpn);
+-//	}
+-        kernel->machine->ReadMem(addr + i, 1,&oneChar);  // copy characters to kernel space
++	while(!kernel->machine->ReadMem(addr + i, 1,&oneChar)); // copy characters to kernel space
+         str[i] = (unsigned char)oneChar;
+     }
+   //  cerr << "length in stringUser2System = " << length << endl;
+@@ -105,10 +95,9 @@ char* stringUser2System(int addr, int convert_length = -1) {
+ void StringSys2User(char* str, int addr, int convert_length = -1) {
+     int length = (convert_length == -1 ? strlen(str) : convert_length);
+     for (int i = 0; i < length; i++) {
+-        kernel->machine->WriteMem(addr + i, 1,
+-                                  str[i]);  // copy characters to user space
++        while(!kernel->machine->WriteMem(addr + i, 1, str[i]));  // copy characters to user space
+     }
+-    kernel->machine->WriteMem(addr + length, 1, '\0');
++    while(!kernel->machine->WriteMem(addr + length, 1, '\0'));
+ }
+ 
+ /**
