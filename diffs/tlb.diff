@@ -1,0 +1,292 @@
+diff --git a/nachos-project/code/build.linux/Makefile b/nachos-project/code/build.linux/Makefile
+index 1bb2ef5..ac31cd7 100755
+--- a/nachos-project/code/build.linux/Makefile
++++ b/nachos-project/code/build.linux/Makefile
+@@ -191,7 +191,7 @@
+ # of "-DSIM_FIX" to the DEFINES.  This should be enabled by default
+ # and eventually will not require the symbol definition
+ ################################################################
+-DEFINES =  -DFILESYS_STUB -DRDATA -DSIM_FIX
++DEFINES =  -DUSE_TLB -DFILESYS_STUB -DRDATA -DSIM_FIX
+ 
+ 
+ #####################################################################
+diff --git a/nachos-project/code/threads/scheduler.cc b/nachos-project/code/threads/scheduler.cc
+index 2456fb0..b40e0ef 100755
+--- a/nachos-project/code/threads/scheduler.cc
++++ b/nachos-project/code/threads/scheduler.cc
+@@ -23,6 +23,7 @@
+ #include "scheduler.h"
+ #include "main.h"
+ 
++extern int gContextSwitches;
+ //----------------------------------------------------------------------
+ // Scheduler::Scheduler
+ // 	Initialize the list of ready but not running threads.
+@@ -123,6 +124,7 @@ void Scheduler::Run(Thread *nextThread, bool finishing) {
+     oldThread->CheckOverflow();  // check if the old thread
+                                  // had an undetected stack overflow
+ 
++    if(nextThread->space != NULL) gContextSwitches++;
+     kernel->currentThread = nextThread;  // switch to the next thread
+     nextThread->setStatus(RUNNING);      // nextThread is now running
+ 
+diff --git a/nachos-project/code/userprog/addrspace.cc b/nachos-project/code/userprog/addrspace.cc
+index 4c06861..df57512 100755
+--- a/nachos-project/code/userprog/addrspace.cc
++++ b/nachos-project/code/userprog/addrspace.cc
+@@ -22,6 +22,7 @@
+ #include "noff.h"
+ #include "synch.h"
+ 
++extern int gTLBSaveBackSwitched; 
+ //----------------------------------------------------------------------
+ // SwapHeader
+ // 	Do little endian to big endian conversion on the bytes in the
+@@ -326,6 +327,56 @@ void AddrSpace::InitRegisters() {
+     DEBUG(dbgAddr, "Initializing stack pointer: " << numPages * PageSize - 16);
+ }
+ 
++//----------------------------------------------------------------------
++// AddrSpace::FindPTE(int vpn)
++// 	Takes the vpn and returns NULL if vpn is illegal else return &pageTable[vpn]
++//----------------------------------------------------------------------
++
++TranslationEntry* AddrSpace::FindPTE(int vpn){
++	if(vpn < 0 || (unsigned int)vpn >= numPages){ //>= because numPages is zero based
++		return NULL;
++	}
++
++	if(!pageTable[vpn].valid)return NULL;
++	return &pageTable[vpn];
++}
++
++//----------------------------------------------------------------------
++// AddrSpace::SaveTLBState()
++// 	copies the 'use' and 'dirty' values of the pages from the tlb to the page table
++//----------------------------------------------------------------------
++
++void AddrSpace::SaveTLBState(){
++#ifdef USE_TLB
++	Machine* machine = kernel->machine;
++	for(int i=0;i<TLBSize;i++){
++                TranslationEntry* entry = &machine->tlb[i];
++
++		if(!entry->valid) continue;
++		TranslationEntry* pte = FindPTE(entry->virtualPage);
++		
++		if(pte == NULL) continue;
++              	if(entry->dirty)  gTLBSaveBackSwitched++;
++                pte->use = entry->use || pte->use; //if already there in pte then don't set back
++                pte->dirty = entry->dirty || pte->dirty;
++               
++        }
++#endif
++}
++
++//----------------------------------------------------------------------
++// AddrSpace::ClearTLB()
++//	Flush the tlb (invalidating the entries)
++//----------------------------------------------------------------------
++
++void AddrSpace::ClearTLB(){
++#ifdef USE_TLB
++	for(int i=0;i<TLBSize;i++){
++            kernel->machine->tlb[i].valid = FALSE;
++    	}
++#endif
++}
++
+ 
+ //----------------------------------------------------------------------
+ // AddrSpace::SaveState
+@@ -335,7 +386,12 @@ void AddrSpace::InitRegisters() {
+ //	For now, don't need to save anything!
+ //----------------------------------------------------------------------
+ 
+-void AddrSpace::SaveState() {}
++void AddrSpace::SaveState() {
++	//implement the saving of tlb entries to the page table
++#ifdef USE_TLB
++	SaveTLBState();
++#endif
++}
+ 
+ //----------------------------------------------------------------------
+ // AddrSpace::RestoreState
+@@ -346,8 +402,16 @@ void AddrSpace::SaveState() {}
+ //----------------------------------------------------------------------
+ 
+ void AddrSpace::RestoreState() {
++    //set the pageTable as NULL when USE_TLB is enabled as only one of those two must be used by machine for translation
++#ifdef USE_TLB
++    kernel->machine->pageTable = NULL;
++    kernel->machine->pageTableSize = 0; //for safe side we have made it zero the pageTable in machine as only one exists at a time either Page table or TLB.
++    //clear the tlb right now
++    ClearTLB();    
++#else
+     kernel->machine->pageTable = pageTable;
+     kernel->machine->pageTableSize = numPages;
++#endif
+ }
+ 
+ //----------------------------------------------------------------------
+diff --git a/nachos-project/code/userprog/addrspace.h b/nachos-project/code/userprog/addrspace.h
+index 57a453c..05c6acf 100755
+--- a/nachos-project/code/userprog/addrspace.h
++++ b/nachos-project/code/userprog/addrspace.h
+@@ -55,6 +55,13 @@ class AddrSpace {
+ 
+     //sbrk function which moves the stack top
+     int Sbrk(int bytes);
++
++    //TLB related implementation
++    int NumPages() const; //returns the process size in number of pages
++    TranslationEntry *GetPageTable(); //returns the base pointer of the page table 
++    TranslationEntry *FindPTE(int vpn); //retuns NULL if vpn is illegal else return &pageTable[vpn]
++    void SaveTLBState(); //copies the 'use' and 'dirty' values of the pages from the tlb to the page table.
++    void ClearTLB(); //flush the tlb (invalidating the entries)
+    private:
+     unsigned int numPages;        // Number of pages in the virtual
+                                   // address space
+diff --git a/nachos-project/code/userprog/exception.cc b/nachos-project/code/userprog/exception.cc
+index 88dbb23..8d1825c 100755
+--- a/nachos-project/code/userprog/exception.cc
++++ b/nachos-project/code/userprog/exception.cc
+@@ -24,6 +24,7 @@
+ #include "copyright.h"
+ #include "main.h"
+ #include "syscall.h"
++#include "machine.h"
+ #include "ksyscall.h"
+ #include "sysdep.h"
+ //----------------------------------------------------------------------
+@@ -564,6 +565,95 @@ void handle_SC_GetPid() {
+     return move_program_counter();
+ }
+ 
++//code to handle tlb miss
++
++//stats declaration
++int gTLBMissCount = 0;
++int gTLBReplaceCount = 0;
++int gTLBInvalidSlotsReplaceCount = 0;
++int gTLBSaveBackDirtyEvicted = 0;
++int gTLBSaveBackSwitched = 0;
++int gContextSwitches = 0;
++
++//next entry index to be evicted for round robin strategy
++static int nextEvicted = 0;
++static int strategy = 0; //if 0-round robin and if 1-random
++
++static int SelectTLBEntry(){
++	//check there are any invalid entries if yes evict them
++	Machine* machine = kernel->machine;
++	for(int i=0;i<TLBSize;i++){
++		TranslationEntry* tlbEntry = &machine->tlb[i];
++		if(!tlbEntry->valid){
++			gTLBInvalidSlotsReplaceCount++;
++			return i;
++		}
++	}
++	gTLBReplaceCount++;
++	//if not found then use the nextEvicted variable
++	int toBeEvicted = nextEvicted;
++	nextEvicted = (nextEvicted + 1) % TLBSize;
++	return toBeEvicted;
++}
++
++static int SelectTLBEntryRandom(){
++	Machine* machine = kernel->machine;
++	for(int i=0;i<TLBSize;i++){
++                TranslationEntry* tlbEntry = &machine->tlb[i];
++                if(!tlbEntry->valid){
++                        gTLBInvalidSlotsReplaceCount++;
++                        return i;
++                }
++        }
++	gTLBReplaceCount++;
++	int toBeEvicted = (rand() % TLBSize);
++	return toBeEvicted;
++}
++
++static void SaveTLBEntry(AddrSpace* space, TranslationEntry* entry){
++	if(space == NULL || !entry->valid){
++		return;
++	}
++
++	TranslationEntry* pte = space->FindPTE(entry->virtualPage);
++	if(pte==NULL) return;
++	if(entry->dirty) gTLBSaveBackDirtyEvicted++;
++	pte->use = entry->use || pte->use;
++	pte->dirty = entry->dirty || pte->dirty;
++	return;
++}
++
++static int handle_tlbMiss(){
++#ifndef USE_TLB
++	return 0;
++#else
++	gTLBMissCount++;
++	int badAddr = kernel->machine->ReadRegister(BadVAddrReg);
++	int vpn = (unsigned int)badAddr / PageSize;
++
++	AddrSpace* space = kernel->currentThread->space;
++	if(space==NULL)return 0;
++
++	int evictIdx;
++	if(strategy==0){
++		evictIdx = SelectTLBEntry();
++	}else{
++		evictIdx = SelectTLBEntryRandom();
++	}
++	TranslationEntry* entryToBeEvicted = &kernel->machine->tlb[evictIdx];
++	SaveTLBEntry(space,entryToBeEvicted);
++	
++	TranslationEntry* pte = space->FindPTE(vpn);
++	if(pte==NULL || !pte->valid) return 0;
++	
++	kernel->machine->tlb[evictIdx] = *pte;
++	kernel->machine->tlb[evictIdx].valid = TRUE;
++	return 1;
++#endif
++}
++	
++
++
+ void ExceptionHandler(ExceptionType which) {
+     int type = kernel->machine->ReadRegister(2);
+ 
+@@ -576,6 +666,9 @@ void ExceptionHandler(ExceptionType which) {
+             break;
+         case PageFaultException:{
+ 	    //kernel->stats->numPageFaults++;
++	    if(handle_tlbMiss() == 1){
++		    return;
++	    }
+ 	    int vaddr = kernel->machine->ReadRegister(BadVAddrReg);
+ 	    kernel->currentThread->space->LoadPage(vaddr);
+ 	    kernel->currentThread->space->RestoreState();
+@@ -594,6 +687,22 @@ void ExceptionHandler(ExceptionType which) {
+         case SyscallException:
+             switch (type) {
+                 case SC_Halt:
++		    cout<< "\n==== TLB Stats ====\n";
++		    cout<< "TLB Misses               : " << gTLBMissCount << "\n";
++		    cout<< "Invalid Slot Fills       : " << gTLBInvalidSlotsReplaceCount << "\n";
++		    cout<< "Valid Slot Evictions     : " << gTLBReplaceCount << "\n";
++		    cout<< "Dirty Savebacks (evict)  : " << gTLBSaveBackDirtyEvicted << "\n";
++		    cout<< "Dirty Savebacks (switch) : " << gTLBSaveBackSwitched << "\n";
++		    cout<< "Context Switches         : " << gContextSwitches << "\n";
++		    cout<< "===================\n";
++
++		    cout<< "\n==== Nachos Stats ====\n";
++		    cout<< "Total Ticks       : " << kernel->stats->totalTicks << "\n";
++		    cout<< "System Ticks      : " << kernel->stats->systemTicks << "\n";
++		    cout<< "User Ticks        : " << kernel->stats->userTicks << "\n";
++		    cout<< "Idle Ticks        : " << kernel->stats->idleTicks << "\n";
++		    cout<< "Num Page Faults   : " << kernel->stats->numPageFaults << "\n";
++		    cout<< "======================\n"; 
+                     return handle_SC_Halt();
+ 		case SC_Sbrk:
+ 		    return handle_SC_Sbrk();
