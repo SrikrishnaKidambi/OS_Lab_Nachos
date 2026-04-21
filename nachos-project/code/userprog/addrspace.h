@@ -55,6 +55,13 @@ class AddrSpace {
 
     //sbrk function which moves the stack top
     int Sbrk(int bytes);
+
+    //TLB related implementation
+    int NumPages() const; //returns the process size in number of pages
+    TranslationEntry *GetPageTable(); //returns the base pointer of the page table 
+    TranslationEntry *FindPTE(int vpn); //retuns NULL if vpn is illegal else return &pageTable[vpn]
+    void SaveTLBState(); //copies the 'use' and 'dirty' values of the pages from the tlb to the page table.
+    void ClearTLB(); //flush the tlb (invalidating the entries)
    private:
     unsigned int numPages;        // Number of pages in the virtual
                                   // address space

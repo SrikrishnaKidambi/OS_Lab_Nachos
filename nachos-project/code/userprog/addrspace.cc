@@ -22,6 +22,7 @@
 #include "noff.h"
 #include "synch.h"
 
+extern int gTLBSaveBackSwitched; 
 //----------------------------------------------------------------------
 // SwapHeader
 // 	Do little endian to big endian conversion on the bytes in the
@@ -326,6 +327,56 @@ void AddrSpace::InitRegisters() {
     DEBUG(dbgAddr, "Initializing stack pointer: " << numPages * PageSize - 16);
 }
 
+//----------------------------------------------------------------------
+// AddrSpace::FindPTE(int vpn)
+// 	Takes the vpn and returns NULL if vpn is illegal else return &pageTable[vpn]
+//----------------------------------------------------------------------
+
+TranslationEntry* AddrSpace::FindPTE(int vpn){
+	if(vpn < 0 || (unsigned int)vpn >= numPages){ //>= because numPages is zero based
+		return NULL;
+	}
+
+	if(!pageTable[vpn].valid)return NULL;
+	return &pageTable[vpn];
+}
+
+//----------------------------------------------------------------------
+// AddrSpace::SaveTLBState()
+// 	copies the 'use' and 'dirty' values of the pages from the tlb to the page table
+//----------------------------------------------------------------------
+
+void AddrSpace::SaveTLBState(){
+#ifdef USE_TLB
+	Machine* machine = kernel->machine;
+	for(int i=0;i<TLBSize;i++){
+                TranslationEntry* entry = &machine->tlb[i];
+
+		if(!entry->valid) continue;
+		TranslationEntry* pte = FindPTE(entry->virtualPage);
+		
+		if(pte == NULL) continue;
+              	if(entry->dirty)  gTLBSaveBackSwitched++;
+                pte->use = entry->use || pte->use; //if already there in pte then don't set back
+                pte->dirty = entry->dirty || pte->dirty;
+               
+        }
+#endif
+}
+
+//----------------------------------------------------------------------
+// AddrSpace::ClearTLB()
+//	Flush the tlb (invalidating the entries)
+//----------------------------------------------------------------------
+
+void AddrSpace::ClearTLB(){
+#ifdef USE_TLB
+	for(int i=0;i<TLBSize;i++){
+            kernel->machine->tlb[i].valid = FALSE;
+    	}
+#endif
+}
+
 
 //----------------------------------------------------------------------
 // AddrSpace::SaveState
@@ -335,7 +386,12 @@ void AddrSpace::InitRegisters() {
 //	For now, don't need to save anything!
 //----------------------------------------------------------------------
 
-void AddrSpace::SaveState() {}
+void AddrSpace::SaveState() {
+	//implement the saving of tlb entries to the page table
+#ifdef USE_TLB
+	SaveTLBState();
+#endif
+}
 
 //----------------------------------------------------------------------
 // AddrSpace::RestoreState
@@ -346,8 +402,16 @@ void AddrSpace::SaveState() {}
 //----------------------------------------------------------------------
 
 void AddrSpace::RestoreState() {
+    //set the pageTable as NULL when USE_TLB is enabled as only one of those two must be used by machine for translation
+#ifdef USE_TLB
+    kernel->machine->pageTable = NULL;
+    kernel->machine->pageTableSize = 0; //for safe side we have made it zero the pageTable in machine as only one exists at a time either Page table or TLB.
+    //clear the tlb right now
+    ClearTLB();    
+#else
     kernel->machine->pageTable = pageTable;
     kernel->machine->pageTableSize = numPages;
+#endif
 }
 
 //----------------------------------------------------------------------

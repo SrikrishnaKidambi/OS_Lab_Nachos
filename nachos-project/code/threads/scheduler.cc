@@ -23,6 +23,7 @@
 #include "scheduler.h"
 #include "main.h"
 
+extern int gContextSwitches;
 //----------------------------------------------------------------------
 // Scheduler::Scheduler
 // 	Initialize the list of ready but not running threads.
@@ -123,6 +124,7 @@ void Scheduler::Run(Thread *nextThread, bool finishing) {
     oldThread->CheckOverflow();  // check if the old thread
                                  // had an undetected stack overflow
 
+    if(nextThread->space != NULL) gContextSwitches++;
     kernel->currentThread = nextThread;  // switch to the next thread
     nextThread->setStatus(RUNNING);      // nextThread is now running
 

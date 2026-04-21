@@ -24,6 +24,7 @@
 #include "copyright.h"
 #include "main.h"
 #include "syscall.h"
+#include "machine.h"
 #include "ksyscall.h"
 #include "sysdep.h"
 //----------------------------------------------------------------------
@@ -564,6 +565,95 @@ void handle_SC_GetPid() {
     return move_program_counter();
 }
 
+//code to handle tlb miss
+
+//stats declaration
+int gTLBMissCount = 0;
+int gTLBReplaceCount = 0;
+int gTLBInvalidSlotsReplaceCount = 0;
+int gTLBSaveBackDirtyEvicted = 0;
+int gTLBSaveBackSwitched = 0;
+int gContextSwitches = 0;
+
+//next entry index to be evicted for round robin strategy
+static int nextEvicted = 0;
+static int strategy = 0; //if 0-round robin and if 1-random
+
+static int SelectTLBEntry(){
+	//check there are any invalid entries if yes evict them
+	Machine* machine = kernel->machine;
+	for(int i=0;i<TLBSize;i++){
+		TranslationEntry* tlbEntry = &machine->tlb[i];
+		if(!tlbEntry->valid){
+			gTLBInvalidSlotsReplaceCount++;
+			return i;
+		}
+	}
+	gTLBReplaceCount++;
+	//if not found then use the nextEvicted variable
+	int toBeEvicted = nextEvicted;
+	nextEvicted = (nextEvicted + 1) % TLBSize;
+	return toBeEvicted;
+}
+
+static int SelectTLBEntryRandom(){
+	Machine* machine = kernel->machine;
+	for(int i=0;i<TLBSize;i++){
+                TranslationEntry* tlbEntry = &machine->tlb[i];
+                if(!tlbEntry->valid){
+                        gTLBInvalidSlotsReplaceCount++;
+                        return i;
+                }
+        }
+	gTLBReplaceCount++;
+	int toBeEvicted = (rand() % TLBSize);
+	return toBeEvicted;
+}
+
+static void SaveTLBEntry(AddrSpace* space, TranslationEntry* entry){
+	if(space == NULL || !entry->valid){
+		return;
+	}
+
+	TranslationEntry* pte = space->FindPTE(entry->virtualPage);
+	if(pte==NULL) return;
+	if(entry->dirty) gTLBSaveBackDirtyEvicted++;
+	pte->use = entry->use || pte->use;
+	pte->dirty = entry->dirty || pte->dirty;
+	return;
+}
+
+static int handle_tlbMiss(){
+#ifndef USE_TLB
+	return 0;
+#else
+	gTLBMissCount++;
+	int badAddr = kernel->machine->ReadRegister(BadVAddrReg);
+	int vpn = (unsigned int)badAddr / PageSize;
+
+	AddrSpace* space = kernel->currentThread->space;
+	if(space==NULL)return 0;
+
+	int evictIdx;
+	if(strategy==0){
+		evictIdx = SelectTLBEntry();
+	}else{
+		evictIdx = SelectTLBEntryRandom();
+	}
+	TranslationEntry* entryToBeEvicted = &kernel->machine->tlb[evictIdx];
+	SaveTLBEntry(space,entryToBeEvicted);
+	
+	TranslationEntry* pte = space->FindPTE(vpn);
+	if(pte==NULL || !pte->valid) return 0;
+	
+	kernel->machine->tlb[evictIdx] = *pte;
+	kernel->machine->tlb[evictIdx].valid = TRUE;
+	return 1;
+#endif
+}
+	
+
+
 void ExceptionHandler(ExceptionType which) {
     int type = kernel->machine->ReadRegister(2);
 
@@ -576,6 +666,9 @@ void ExceptionHandler(ExceptionType which) {
             break;
         case PageFaultException:{
 	    //kernel->stats->numPageFaults++;
+	    if(handle_tlbMiss() == 1){
+		    return;
+	    }
 	    int vaddr = kernel->machine->ReadRegister(BadVAddrReg);
 	    kernel->currentThread->space->LoadPage(vaddr);
 	    kernel->currentThread->space->RestoreState();
@@ -594,6 +687,22 @@ void ExceptionHandler(ExceptionType which) {
         case SyscallException:
             switch (type) {
                 case SC_Halt:
+		    cout<< "\n==== TLB Stats ====\n";
+		    cout<< "TLB Misses               : " << gTLBMissCount << "\n";
+		    cout<< "Invalid Slot Fills       : " << gTLBInvalidSlotsReplaceCount << "\n";
+		    cout<< "Valid Slot Evictions     : " << gTLBReplaceCount << "\n";
+		    cout<< "Dirty Savebacks (evict)  : " << gTLBSaveBackDirtyEvicted << "\n";
+		    cout<< "Dirty Savebacks (switch) : " << gTLBSaveBackSwitched << "\n";
+		    cout<< "Context Switches         : " << gContextSwitches << "\n";
+		    cout<< "===================\n";
+
+		    cout<< "\n==== Nachos Stats ====\n";
+		    cout<< "Total Ticks       : " << kernel->stats->totalTicks << "\n";
+		    cout<< "System Ticks      : " << kernel->stats->systemTicks << "\n";
+		    cout<< "User Ticks        : " << kernel->stats->userTicks << "\n";
+		    cout<< "Idle Ticks        : " << kernel->stats->idleTicks << "\n";
+		    cout<< "Num Page Faults   : " << kernel->stats->numPageFaults << "\n";
+		    cout<< "======================\n"; 
                     return handle_SC_Halt();
 		case SC_Sbrk:
 		    return handle_SC_Sbrk();
